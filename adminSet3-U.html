@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Salesforce Questionnaire Review</title>
+<style>
+:root {
+  --bg1: #5b4bff;
+  --bg2: #2f7cf6;
+  --bg3: #7c4dff;
+  --card: #ffffff;
+  --text: #1f2440;
+  --muted: #6f7792;
+  --line: #e8ebf5;
+  --accent: #6d5efc;
+  --accent2: #33a1ff;
+  --success: #1fbe72;
+  --successBg: #eafbf3;
+  --danger: #ef476f;
+  --dangerBg: #fff0f4;
+  --warn: #ffb020;
+  --shadow: 0 10px 30px rgba(25, 35, 90, 0.12);
+  --shadow-lg: 0 18px 45px rgba(17, 25, 60, 0.18);
+  --radius: 20px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255,255,255,.18), transparent 22%),
+    radial-gradient(circle at 85% 15%, rgba(255,255,255,.16), transparent 20%),
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,.12), transparent 22%),
+    linear-gradient(135deg, var(--bg3), var(--bg1) 45%, var(--bg2));
+  min-height: 100vh;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  backdrop-filter: blur(14px);
+  background: rgba(20, 24, 60, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 30px rgba(10,16,50,.18);
+  transition: transform .25s ease, opacity .2s ease;
+}
+
+.topbar.collapsed {
+  transform: translateY(-120%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.topbar-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 14px 18px 10px;
+  color: #fff;
+}
+
+.topbar-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1100;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(17, 24, 39, 0.72);
+  color: #fff;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .3px;
+  border-radius: 12px;
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: .2px;
+}
+
+.title .pill {
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.16);
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: .84rem;
+  font-weight: 700;
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.12);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: .84rem;
+  white-space: nowrap;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.progress-wrap {
+  height: 12px;
+  background: rgba(255,255,255,.18);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.12);
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #b89cff, #ffffff, #8de1ff);
+  transition: width .35s ease;
+}
+
+.actions { display: flex; gap:10px; flex-wrap: wrap; }
+
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease, background .18s ease;
+}
+
+button:hover { transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+
+.btn-primary {
+  background: linear-gradient(135deg, #ffffff, #dde7ff);
+  color: #34406b;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, #1ee3cf, #5ea1ff);
+  color: #08203f;
+  box-shadow: 0 10px 22px rgba(14,199,213,.24);
+}
+
+.btn-soft {
+  background: rgba(255,255,255,.14);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.16);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ffd7e1, #fff);
+  color: #7f2440;
+}
+
+.shell {
+  max-width: 1200px;
+  margin: 0 auto 48px;
+  padding: 110px 14px 28px;
+
+body.topbar-hidden .shell {
+  padding-top: 24px;
+}
+
+.nav-dots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(34px, 1fr));
+  gap: 8px;
+  margin: 18px 0 22px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 22px;
+  padding: 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.dot {
+  height: 34px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  font-weight: 800;
+  text-decoration: none;
+  background: rgba(255,255,255,.18);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.18);
+  transition: all .2s ease;
+}
+
+.dot:hover { transform: translateY(-2px); background: rgba(255,255,255,.28); }
+.dot.answered { background: rgba(68,208,139,.28); }
+.dot.current { outline: 2px solid rgba(255,255,255,.85); }
+.dot.flagged { background: rgba(255,185,72,.32); }
+.dot.correct { background: rgba(31,190,114,.38); }
+.dot.incorrect { background: rgba(239,71,111,.36); }
+
+.summary {
+  display: none;
+  margin: 6px 0 22px;
+  background: rgba(255,255,255,.2);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 24px;
+  padding: 16px;
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  animation: fadeSlide .55s ease both;
+}
+
+.summary.show { display: block; }
+.summary-grid {
+  display:grid;
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.summary-item {
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.summary-item .k { font-size: .8rem; opacity: .86; }
+.summary-item .v { font-size: 1.35rem; font-weight: 800; margin-top: 4px; }
+
+.questions {
+  display: grid;
+  gap: 18px;
+}
+
+.card {
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 18px 18px 14px;
+}
+
+.card.visible { opacity:1; transform: translateY(0); }
+.card.flagged-review { box-shadow: 0 0 0 3px rgba(255,176,32,.28), var(--shadow-lg); }
+.card.correct-card { box-shadow: 0 0 0 3px rgba(31,190,114,.16), var(--shadow); }
+.card.incorrect-card { box-shadow: 0 0 0 3px rgba(239,71,111,.14), var(--shadow); }
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.badges { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.badge {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size: .82rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.badge.qn {
+  background: linear-gradient(135deg,#6d5efc,#3aa9ff);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(86,101,248,.25);
+}
+.badge.type { background:#eef3ff; color:#42507f; }
+.badge.sel { background:#f5f7fd; color:#687392; }
+
+.question-text {
+  font-size: 1.02rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.source-line {
+  color: var(--muted);
+  font-size: .92rem;
+  margin-top: 3px;
+  white-space: pre-line;
+}
+
+.note {
+  margin: 12px 0 6px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: #fff8e8;
+  color: #7f5f13;
+  border: 1px solid #f4dfaa;
+  font-size: .88rem;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.option {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  min-height: 52px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(65,77,140,.08);
+  border-color: #d8def2;
+}
+
+.option input {
+  position: absolute;
+  inset: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.letter {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size: .88rem;
+  color:#556084;
+  background: linear-gradient(180deg,#f7f9ff,#edf2ff);
+  border: 1px solid #d9e1f7;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+.mark {
+  margin-left:auto;
+  min-width:24px;
+  height:24px;
+  border-radius:50%;
+  border:2px solid #cfd6eb;
+  position:relative;
+  align-self:center;
+  background:#fff;
+  transition: all .2s ease;
+}
+
+.mark::after {
+  content: "";
+  position:absolute;
+  inset:5px;
+  border-radius:50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  transform: scale(0);
+  transition: transform .18s ease;
+}
+
+.option.selected {
+  background: linear-gradient(180deg,#f9f8ff,#f3f7ff);
+  border-color: #cfd7ff;
+}
+
+.option.selected .mark {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: 0 8px 18px rgba(88,110,252,.25);
+}
+
+.option.selected .mark::after {
+  transform: scale(1);
+  background: #fff;
+  clip-path: polygon(14% 52%, 0 66%, 38% 100%, 100% 25%, 84% 12%, 35% 72%);
+  inset: 4px;
+  animation: checkpop .22s ease;
+}
+
+.option-text {
+  flex: 1;
+  min-width: 0;
+  color: #2a3153;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.locked .option { cursor: default; }
+.locked .option:hover { transform: none; box-shadow: none; }
+
+.option.correct {
+  background: linear-gradient(135deg,#e8fbf1,#dff8ee);
+  border-color: #9be2bf;
+}
+
+.option.correct .letter {
+  background: linear-gradient(135deg,#27c577,#62d39d);
+  color: #fff;
+  border-color: transparent;
+}
+
+.option.correct .mark {
+  background: linear-gradient(135deg,#22c36f,#79dfa8);
+  border-color: transparent;
+}
+
+.option.incorrect {
+  background: linear-gradient(135deg,#fff0f4,#ffe6ee);
+  border-color: #ffb3c5;
+}
+
+.option.incorrect .letter {
+  background: linear-gradient(135deg,#ff6589,#ff8aa8);
+  color:#fff;
+  border-color: transparent;
+}
+
+.option.incorrect .mark {
+  background: linear-gradient(135deg,#ff5f86,#ff8eab);
+  border-color: transparent;
+}
+
+.option.missed {
+  background:#f4fff9;
+  border: 2px dashed #6fd198;
+}
+
+.footer-space { height:20px; }
+.small { font-size:.86rem; color: var(--muted); }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes checkpop {
+  0% { transform: scale(.3); }
+  70% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width:900px) {
+  .summary-grid { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+  .bar-row { grid-template-columns: 1fr; }
+  .topbar-toggle { display: inline-flex; }
+}
+
+@media (max-width:640px) {
+  .shell { padding: 120px 12px 20px; }
+  .card { padding: 16px; }
+  .topbar-inner { padding: 12px; }
+  .title { font-size: .98rem; }
+  .summary-grid { grid-template-columns: 1fr 1fr; }
+  .option { padding: 12px 13px; }
+  .letter { min-width:30px; height:30px; }
+  .dot { height:30px; font-size: .75rem; }
+  .stats { width:100%; }
+  .stat { flex: 1 1 calc(50% - 10px); }
+  .actions { width:100%; }
+  .actions button { flex:1 1 100%; }
+}
+</style>
+</head>
+<body>
+  <button class="topbar-toggle" id="topbarToggle" type="button" aria-expanded="true">Hide Topbar</button>
+  <header class="topbar" id="topbar">
+    <div class="topbar-inner">
+      <div class="title-row">
+        <div class="title">
+          <span class="pill">Salesforce Questionnaire UI</span>
+          <span>65 Questions</span>
+        </div>
+        <div class="stats">
+          <div class="stat" id="answeredStat">Answered: 0 / 65</div>
+          <div class="stat" id="selectionStat">Selections: 0</div>
+          <div class="stat" id="scoreStat">Score: —</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="progress-wrap" aria-label="Progress">
+          <div class="progress" id="progressBar"></div>
+        </div>
+        <div class="actions">
+          <button class="btn-accent" id="submitBtn">Submit</button>
+          <button class="btn-soft" id="reviewBtn">Review</button>
+          <button class="btn-danger" id="restartBtn">Restart</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <nav class="nav-dots" id="navDots" aria-label="Question navigation"></nav>
+
+    <section class="summary" id="summaryPanel" aria-live="polite">
+      <div class="summary-grid">
+        <div class="summary-item"><div class="k">Total questions</div><div class="v" id="sumTotal">65</div></div>
+        <div class="summary-item"><div class="k">Answered</div><div class="v" id="sumAnswered">0</div></div>
+        <div class="summary-item"><div class="k">Total selections</div><div class="v" id="sumSelections">0</div></div>
+        <div class="summary-item"><div class="k">Correct questions</div><div class="v" id="sumCorrectQuestions">0</div></div>
+        <div class="summary-item"><div class="k">Score percentage</div><div class="v" id="sumScore">0%</div></div>
+      </div>
+    </section>
+
+    <section class="questions" id="questions" aria-label="All questions"></section>
+    <div class="footer-space"></div>
+  </main>
+
+<script>
+const questions = [
+  {
+    number: 1,
+    prompt: `Choose 2 options.
+Which two data loss considerations should a Platform Administrator keep in mind when changing a custom field type from Text to Picklist?`,
+    options: [
+      `There will be no data loss with use of a global value set.`,
+      `Auto updates will be made to Visualforce references to prevent data loss.`,
+      `Any list view based on the custom field is deleted.`,
+      `Assignment and escalation rules may be affected.`
+    ],
+    correct: [2,3],
+    uncertain: false
+  },
+  {
+    number: 2,
+    prompt: `Choose 1 option.
+Cloud Kicks has an administrator team that manages the org. The company has asked for a small subset of leadership users to have Modify All access, like the administrators have.
+How should the administrator team accomplish this?`,
+    options: [
+      `Create a permission set with Modify All on the relevant objects and assign it to the subset of users.`,
+      `Clone the administrator profile and assign it to the leadership users.`,
+      `Grant system administrator permissions to the leadership users.`,
+      `Create a custom permission set and grant Modify All for the needed records and objects.`
+    ],
+    correct: [3],
+    uncertain: true
+  },
+  {
+    number: 3,
+    prompt: `A Platform Administrator at Ursa Major Solar imported records into an object by mistake.
+Which two tools should the administrator use to undo this import?`,
+    options: [
+      `Mass Delete Records`,
+      `Data Import Wizard`,
+      `Weekly Data Export`,
+      `Data Loader`
+    ],
+    correct: [0,3],
+    uncertain: false
+  },
+  {
+    number: 4,
+    prompt: `A Platform Administrator at Ursa Major Solar is asked to change the Work Item and Project custom object relationship from a master-detail to a lookup.
+Which scenario prevents the administrator from fulfilling the requirement?`,
+    options: [
+      `A junction object is required to support the lookup.`,
+      `The lookup field in all the records contains a value.`,
+      `Roll-up summary fields exist on the master object.`,
+      `The lookup field is required for saving records.`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 5,
+    prompt: `Choose 1 option.
+Which component of an approval process defines the chain of approval, determines which records can advance, and specifies where to assign approval requests?`,
+    options: [
+      `Approval Steps`,
+      `Entry Criteria`,
+      `Approval Actions`,
+      `Process Definition Detail`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 6,
+    prompt: `When a qualified lead is converted, what happens to its related records?`,
+    options: [
+      `The lead is deleted and all associated records are removed.`,
+      `Only the lead owner is transferred to the new contact.`,
+      `Related activity history is deleted during conversion.`,
+      `Campaign history is attached to the resulting contact, account, and opportunity records.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 7,
+    prompt: `Choose 1 option.
+A Platform Administrator at Cloud Kicks wants to track details around marketing efforts, including emails, trade shows, and webinars.
+How should the administrator accomplish this?`,
+    options: [
+      `Create record types and page layouts for each type of campaign.`,
+      `Create a custom field on the Campaign object for the type of initiative.`,
+      `Use campaign hierarchies to organize campaign types.`,
+      `Create a custom report type with relevant fields.`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 8,
+    prompt: `A sales manager at Cloud Kicks would like a dashboard to emphasize some important data and tell a more compelling data story to the sales reps.
+How should a Platform Administrator achieve this for the sales manager?`,
+    options: [
+      `Use the Highlights Panel.`,
+      `Assign a new Task to each rep.`,
+      `Use a Text Widget.`,
+      `Send out a mass email.`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 9,
+    prompt: `Choose 1 option.
+A Platform Administrator at Cloud Kicks has a flow in production that is supposed to create new records. However, no new records are being created.
+What is causing this issue?`,
+    options: [
+      `The flow is inactive.`,
+      `The flow URL is deactivated.`,
+      `The flow is Read Only.`,
+      `The flow trigger is missing.`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 10,
+    prompt: `Choose 1 option.
+The client services and customer support teams share the same profile but have different permission sets. The custom object Retention related list needs to be restricted to the client services team on the Lightning record page layout.
+What should a Platform Administrator use to fulfill this request?`,
+    options: [
+      `Record Type Assignment`,
+      `Sharing Settings`,
+      `Page Layout Assignment`,
+      `Component Visibility`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 11,
+    prompt: `A question about a sales opportunity pipeline asks which feature a Platform Administrator should recommend.`,
+    options: [
+      `Create a custom dashboard with opportunity pipeline charts and stage metrics.`,
+      `Configure opportunity list views with custom filters and summary fields.`,
+      `Set up opportunity reports with chart components and stage-based grouping.`,
+      `Use the Kanban view for opportunities with card fields and drag-and-drop functionality.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 12,
+    prompt: `Universal Containers has two sales teams, sales team A and sales team B. Each team has their own role in the role hierarchy. Both roles are subordinated of the same Manager role.
+How should a Platform Administrator share records owned by sales team A with sales team B?`,
+    options: [
+      `Criteria-based sharing`,
+      `Hierarchical sharing`,
+      `Owner-based sharing`,
+      `Manual sharing`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 13,
+    prompt: `Choose 1 option.
+Which feature gives a sales team the ability to prioritize deals with recent updates in the List view and Kanban view?`,
+    options: [
+      `Deal Change Highlights`,
+      `Big Deal Alerts`,
+      `Opportunity Path`,
+      `Report Filters`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 14,
+    prompt: `Cloud Kicks (CK) has a new Platform Administrator who is asked to put together a memo detailing Salesforce usage to budget for upcoming license purchases.
+Where should the administrator go to find out what type of licenses CK has purchased and how many are available?`,
+    options: [
+      `Usage-based entitlements related list in company information`,
+      `User licenses related list in company information`,
+      `User management settings in setup`,
+      `Search for licenses types in setup`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 15,
+    prompt: `When a sales rep clicks a button on an opportunity, a simple discount calculator screen should be launched.
+Which automation tool should a Platform Administrator use to build this discount calculator screen?`,
+    options: [
+      `Batch Apex`,
+      `Flow Builder`,
+      `OmniStudio`,
+      `Platform Event`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 16,
+    prompt: `In an approval process, which feature allows a user to temporarily assign their approval responsibilities to another user for a predetermined time period?`,
+    options: [
+      `Queue`,
+      `Delegated Approver`,
+      `Approval Role`,
+      `Manager`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 17,
+    prompt: `Choose 2 options.
+A user from Northern Trail Outfitters is having trouble logging into Salesforce.
+Which two steps should a Platform Administrator take to help the user log in to Salesforce?`,
+    options: [
+      `Log in as the user to unlock the user and reset the password.`,
+      `Use the unlock button on the user’s record detail page.`,
+      `Reset the password policies to allow the user to login.`,
+      `Reset password on the user’s record detail page.`
+    ],
+    correct: [1,3],
+    uncertain: false
+  },
+  {
+    number: 18,
+    prompt: `At Cloud Kicks (CK), cases are being assigned a default Case Owner and showing a Created By and Last Modified By that is not expected.
+What should a Platform Administrator edit to change this behavior?`,
+    options: [
+      `Debug Logs`,
+      `Process Automation Settings`,
+      `Support Settings`,
+      `Support Processes`
+    ],
+    correct: [2],
+    uncertain: true
+  },
+  {
+    number: 19,
+    prompt: `A Platform Administrator needs to create a new prompt template.
+What should the administrator use to display real Salesforce data in an agent response from a prompt template?`,
+    options: [
+      `Flow`,
+      `Merge Fields`,
+      `Agent Instructions`,
+      `Picklists`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 20,
+    prompt: `Choose 3 options.
+What are three characteristics of a master-detail relationship?`,
+    options: [
+      `The master object can be a standard or custom object.`,
+      `Each object can have up to five master-detail relationships.`,
+      `Permissions for the detail record are set independently of the master.`,
+      `Roll-up summaries are supported in master-detail relationships.`,
+      `The owner field on the detail records is the owner of the master record.`
+    ],
+    correct: [0,3,4],
+    uncertain: false
+  },
+  {
+    number: 21,
+    prompt: `Ursa Major Solar wants to automatically notify a manager about any cases awaiting a response from an agent for more than 2 hours after case creation.
+Which feature should a Platform Administrator use to fulfill this requirement?`,
+    options: [
+      `Omni-Channel Supervisor`,
+      `Formula field`,
+      `Case Escalation Rule`,
+      `Assignment Rule`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 22,
+    prompt: `A Platform Administrator deactivates an agent to add a new topic and action.
+What happens to any ongoing user conversation with the agent?`,
+    options: [
+      `The agent will continue conversations using the deactivated agent until reactivated.`,
+      `The agent will send a system error message as a response to any new messages.`,
+      `The agent window automatically closes to prevent new messages.`,
+      `The agent will pause the conversation and resume once reactivated.`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 23,
+    prompt: `Choose 1 option.
+A Platform Administrator at Cloud Kicks is trying to set up a new user but receives an error about a duplicate username when trying to save the user record.
+What is causing this error to happen?`,
+    options: [
+      `The email address and username must be unique across all Salesforce orgs.`,
+      `The username must be unique across all Salesforce orgs.`,
+      `The username was not configured in the format of an email address.`,
+      `The username has a restricted domain name within it.`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 24,
+    prompt: `Choose 1 option.
+A paragraph about sales reps at Cloud Kicks reporting each other’s account and opportunity records with an organization-wide default for Account and Opportunity set to Private.`,
+    options: [
+      `A user can view records they own and others shared with them.`,
+      `A manager can access all subordinate records through role hierarchy.`,
+      `A user can access records shared with their public group.`,
+      `A user can grant access to another team member by manually sharing a record.`
+    ],
+    correct: [3],
+    uncertain: true
+  },
+  {
+    number: 25,
+    prompt: `A call center manager wants to provide agents with a case dashboard that can be drilled down by case origin, status, and owner.
+What should a Platform Administrator add to the dashboard to fulfill the request?`,
+    options: [
+      `Bucket Column`,
+      `Dashboard Filter`,
+      `Combination Chart`,
+      `Dashboard Widget`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 26,
+    prompt: `At Cloud Kicks, when a rep needs to seek additional support help, there’s a series of actions the company wants to ensure are taken. The steps include sending an email and changing the status and owner of the case.
+What should a Platform Administrator use to give the reps an easy way to make these updates?`,
+    options: [
+      `Macros with Quick Actions`,
+      `Quick Text with Email Templates`,
+      `Autolaunched Flows with Email Alerts`,
+      `Case Assignment Rules`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 27,
+    prompt: `A Platform Administrator at Universal Containers is trying to deactivate a user who has left the company but is unable to do so.
+What is preventing the administrator from deactivating this user?`,
+    options: [
+      `The user has a role assignment above the manager.`,
+      `The user is the owner of a Salesforce record.`,
+      `The user has a password policy violation.`,
+      `The user is the running user of a dashboard.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 28,
+    prompt: `Choose 1 option.
+The marketing director at Northern Trail Outfitters has requested that the Budget field be populated in order for the Lead Status field to be marked as qualified.
+Which tool should a Platform Administrator use to fulfill this request?`,
+    options: [
+      `Require Field`,
+      `Workflow Rule`,
+      `Validation Rule`,
+      `Lead Conversion`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 29,
+    prompt: `Cloud Kicks wants a report to categorize accounts into small, medium, and large based on the dollar value found in the Contract Value field.
+Which feature should a Platform Administrator use to meet this request?`,
+    options: [
+      `Group Rows`,
+      `Bucket Column`,
+      `Detail Column`,
+      `Filter Logic`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 30,
+    prompt: `A Platform Administrator needs to import 65,000 new records into a custom object.
+Which tool should the administrator use?`,
+    options: [
+      `Rest API`,
+      `Schema Builder`,
+      `Data Loader`,
+      `Data Import Wizard`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 31,
+    prompt: `Choose 1 option.
+What is the next step an agent performs when the task within an agentic loop are all unsatisfactory?`,
+    options: [
+      `Routes to a live agent`,
+      `Asks for additional information`,
+      `Gives an error message`,
+      `Provides the best answer possible with caveats`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 32,
+    prompt: `A Platform Administrator creates a custom text area field and adds it to a service team’s page layout.`,
+    options: [
+      `In the Account object manager, create a custom compact layout.`,
+      `From the page layout editor, drag the field to the highlights panel.`,
+      `Make the field required and move it to the top of the page.`,
+      `Create a new page layout and a new section titled highlights panel.`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 33,
+    prompt: `Choose 1 option.
+Northern Trail Outfitters has two different sales processes for business and partner opportunities, with different page layouts and picklist value options.`,
+    options: [
+      `Different page layouts that control the picklist values for the opportunity types`,
+      `Separate record types and sales processes for the different types of opportunities`,
+      `Validation rules that ensure that users are entering accurate sales stage information`,
+      `Public groups to limit record types and sales processes for opportunities`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 34,
+    prompt: `A sales rep typically has several open opportunities for each of their accounts.
+Which Platform Administrator suggestion would be used to obtain the total number of accounts associated with open opportunities in a report?`,
+    options: [
+      `Group Rows`,
+      `Bucket Column`,
+      `Unique Count`,
+      `Report Filter`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 35,
+    prompt: `A paragraph describing Universal Containers asks:
+Which tool allows the business to control its own assignment of work?`,
+    options: [
+      `Email-to-Case`,
+      `Lead Assignment Rules`,
+      `Case Assignment Rules`,
+      `Omni-Channel`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 36,
+    prompt: `A sales team is having difficulty understanding which stage their opportunity is in and what the company sales process requires of them at that stage.
+Which feature should a Platform Administrator implement to help the sales team quickly determine where they are in the sales process and what is required of them?`,
+    options: [
+      `Opportunity Sales Path`,
+      `Reports & Dashboards`,
+      `List Views`,
+      `Big Deal Alerts`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 37,
+    prompt: `Choose 1 option.
+Northern Trail Outfitters (NTO) wants to ensure new Contacts are validated before they can be saved. If a user selects that the Lead Source picklist value is Other, NTO also wants to populate a custom text field called Source__c.
+Which validation rule should a Platform Administrator configure to meet this requirement?`,
+    options: [
+      `AND(ISPICKVAL(LeadSource, "Other"), ISBLANK(Source__c))`,
+      `ISPICKVAL(LeadSource, "Other") && ISBLANK(Source__c)`,
+      `IF(ISPICKVAL(LeadSource, "Other"), ISBLANK(Source__c), FALSE)`,
+      `AND(ISPICKVAL(LeadSource, "Other"), NOT(ISBLANK(Source__c)))`
+    ],
+    correct: [3],
+    uncertain: true
+  },
+  {
+    number: 38,
+    prompt: `Choose 2 options.
+Northern Trail Outfitters wants to initiate expense reports from Salesforce to the external HR system. Managers and directors need to review this process.`,
+    options: [
+      `Outbound Message`,
+      `Quick Action`,
+      `Email Alert Action`,
+      `Approval Process`
+    ],
+    correct: [0,3],
+    uncertain: false
+  },
+  {
+    number: 39,
+    prompt: `What is an Agentforce use case in a sales organization?`,
+    options: [
+      `Generating cold calls`,
+      `Automating Lead Qualification`,
+      `Automating all marketing content`,
+      `Providing basic web bot chats`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 40,
+    prompt: `There are multiple system administrators at Cloud Kicks that make configuration changes.
+Which tool gives the system administrators the ability to track these changes?`,
+    options: [
+      `Feed Tracking`,
+      `Setup Audit Trail`,
+      `Health Check`,
+      `History Tracking`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 41,
+    prompt: `A Platform Administrator at Universal Containers is asked to restrict login access for users to specific hours and specific IP addresses to help minimize the risk of bad actors getting into the org.
+Which setting should the administrator update to accomplish this?`,
+    options: [
+      `Custom permission sets`,
+      `The user’s role`,
+      `Company Settings`,
+      `The user’s profile`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 42,
+    prompt: `Universal Containers (UC) provides feedback that support cases are not being responded to quickly enough, mentioning urgent case queue issues and notifying the support manager.
+Which feature should Platform Administrator configure to meet this requirement?`,
+    options: [
+      `Case Escalation Rules`,
+      `Case Scheduled Reports`,
+      `Case Assignment Rules`,
+      `Case Dashboard Refreshes`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 43,
+    prompt: `Cloud Kicks has hired a new sales executive who wants to implement a document merge solution in Salesforce.
+How should a Platform Administrator implement this solution?`,
+    options: [
+      `Download the solution from AppExchange.`,
+      `Configure the package from Salesforce Setup.`,
+      `Create a managed package in AppExchange.`,
+      `Install a package from the Partner Portal.`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 44,
+    prompt: `Choose 1 option.
+Universal Containers wants to track all stakeholders involved in its sales opportunities, including decision-making authority, influence on the buying process, and primary contact for each deal.
+Which feature should Platform Administrator configure to meet this requirement?`,
+    options: [
+      `Use contact roles on opportunities to identify stakeholder involvement and influence.`,
+      `Configure opportunity team members to track internal and external stakeholders.`,
+      `Use standard fields on opportunities to track stakeholder information.`,
+      `Set up account teams to track stakeholders across multiple opportunities.`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 45,
+    prompt: `A Platform Administrator needs users to choose a specific search engine from a picklist when Lead Source = Search Engine.
+What is the most efficient way for the administrator to complete this requirement?`,
+    options: [
+      `Create a dependent picklist based on the Lead Source field.`,
+      `Create a custom checkbox field for each search engine.`,
+      `Add a custom picklist field and set a validation rule for valid entries.`,
+      `Create a formula field that maps search engines to lead sources.`
+    ],
+    correct: [2],
+    uncertain: true
+  },
+  {
+    number: 46,
+    prompt: `Ursa Major Solar wants users to see the Top Opportunities report in the Salesforce mobile app.`,
+    options: [
+      `Enable Today for the Salesforce mobile app.`,
+      `Enable Mobile Home for the Salesforce mobile app.`,
+      `Add the Dashboards tab to the Salesforce mobile app.`,
+      `Add the Reports tab to the Salesforce mobile app.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 47,
+    prompt: `Choose 1 option.
+A Platform Administrator is building an agent for an ecommerce support team, mentioning an agent action called updateShippingAddress.
+Which action instruction should be administered according to best practices?`,
+    options: [
+      `Update the shipping address for the customer after verifying the order and account match.`,
+      `Use the shipping address field only when a ticket is escalated.`,
+      `Ignore customer address updates unless they are requested in writing.`,
+      `Request the full billing information before making any update.`
+    ],
+    correct: [0],
+    uncertain: true
+  },
+  {
+    number: 48,
+    prompt: `Choose 1 option.
+A scenario involving service reps in a call center and a Platform Administrator.
+Which function should the administrator use to implement this request?`,
+    options: [
+      `Permission Set`,
+      `Trusted IP Ranges`,
+      `Custom Profile`,
+      `Multi-factor Authentication`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 49,
+    prompt: `Choose 1 option.
+A paragraph about Cloud Kicks (CK) partnering with a used shoe store and second-hand bicycle emporium describes an automated business process to count open cases.
+Which flow should a Platform Administrator recommend automating within Flow Builder for this business process?`,
+    options: [
+      `Scheduled flow`,
+      `Record-triggered flow`,
+      `Automation event-triggered flow`,
+      `Autolaunched flow`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 50,
+    prompt: `Choose 1 option.
+Cloud Kicks uses the standard Account Type field to indicate different account tiers. Users find this confusing, so management has asked that the field be changed to read Tier on the page layouts.
+How should a Platform Administrator implement this change?`,
+    options: [
+      `Build a custom field called Tier and delete Type.`,
+      `Edit the Type field and change the name.`,
+      `Create a global picklist value set.`,
+      `Use Rename Tabs and Labels.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 51,
+    prompt: `Choose 1 option.
+Cloud Kicks’ management team is hoping to increase user productivity by switching to consoles instead of the current traditional Salesforce user interface.
+What should a Platform Administrator use to implement this request?`,
+    options: [
+      `Omni-Channel`,
+      `Screen Flow`,
+      `App Manager`,
+      `App Builder`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 52,
+    prompt: `Choose 1 option.
+A Platform Administrator at Universal Containers needs an automated way to delete records based on field values.
+Which automated solution should the administrator use?`,
+    options: [
+      `Flow Orchestration`,
+      `Mass Delete Records`,
+      `Automation Studio`,
+      `Flow Builder`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 53,
+    prompt: `Choose 1 option.
+Users at Cloud Kicks want to see information that is more useful for their role on the Case page.
+How should a Platform Administrator make the pages more dynamic and easier to use?`,
+    options: [
+      `Add component visibility filters to the components.`,
+      `Delete the extra components from the page.`,
+      `Include more tab components with filters.`,
+      `Remove fields from the record details component.`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 54,
+    prompt: `Cloud Kicks wants Agentforce to adapt its behavior based on real time customer input.
+Which feature directly enables this capability?`,
+    options: [
+      `Data Cloud`,
+      `Tableau`,
+      `Custom actions`,
+      `Screen flow`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 55,
+    prompt: `Choose 1 option.
+A salesperson complains that the Log a Call button is missing from the highlights panel of an Opportunity page.
+What is the reason for this?`,
+    options: [
+      `The Log a Call action has not been added to the Salesforce Mobile and Lightning Experience Actions section of the page layout.`,
+      `The custom Log a Call permission is missing from the user’s profile and assigned permission sets.`,
+      `The custom Log a Call permission has been disabled at the org level in Setup.`,
+      `The Log a Call action will appear within the Activity Component as a standard behavior rather than the highlights panel.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 56,
+    prompt: `Ursa Major Solar wants to see collaboration and updates across various Chatter groups, records, and announcements from the CEO in a single place.`,
+    options: [
+      `Chatter Group`,
+      `Chatter Daily Digest`,
+      `Chatter Feed`,
+      `Chatter Stream`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 57,
+    prompt: `Choose 1 option.
+Cases submitted through a case request must be acknowledged immediately through email, assigned to appropriate agents, and any cases still unresolved must be escalated to support management.
+Which additional case management tool is necessary to meet this requirement?`,
+    options: [
+      `Formulas`,
+      `Escalation Rules`,
+      `Support Processes`,
+      `Entitlements`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 58,
+    prompt: `Choose 1 option.
+A group of sales reps can view each other’s orders on a report; however, they would like a report to view just their own orders.
+What should Platform Administrator do to set up a report for the sales reps?`,
+    options: [
+      `Save the report in a private folder for the user.`,
+      `Set the Opportunity Filter for Primary as True.`,
+      `Set Organization Wide Defaults of Order object to Private.`,
+      `Filter by Opportunity Owner equals the current user.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 59,
+    prompt: `Choose 1 option.
+An agent is being developed with several actions that all retrieve information from different databases:
+GetCustomerInfo
+GetOrderDetails
+GetShippingStatus`,
+    options: [
+      `Add the word “Salesforce” to the beginning of each action name to improve context for the large language model.`,
+      `Use additional related verbs, such as Find, Retrieve, or Identify.`,
+      `Use a consistent naming convention by starting each action with the verb “Get.”`,
+      `Remove all verbs and use only nouns, such as CustomerInfo, OrderDetails, and ShippingStatus.`
+    ],
+    correct: [2],
+    uncertain: false
+  },
+  {
+    number: 60,
+    prompt: `Choose 1 option.
+Cloud Kicks has a custom object called Shipments. The company wants to associate shipments to the accounts they are related to.
+Which type of relationship should a Platform Administrator make between Shipments and Accounts?`,
+    options: [
+      `Accounts should have a lookup to Shipments.`,
+      `Shipments should have a lookup to Account.`,
+      `Accounts should have a master detail to Shipments.`,
+      `Shipments should have a master detail to Accounts.`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 61,
+    prompt: `Choose 1 option.
+Which action should a Platform Administrator configure to reverse a submitted approval request and unlock the associated record when setting up an approval process?`,
+    options: [
+      `Recall Actions`,
+      `Final Rejection Actions`,
+      `Final Approval Actions`,
+      `Initial Submission Actions`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 62,
+    prompt: `In an approval process, what happens when a queue is selected as the approver?`,
+    options: [
+      `Only the queue owner can approve on behalf of the queue.`,
+      `The queue acts as a single approver but only one member can take action.`,
+      `The queue requires a separate approval step for each member.`,
+      `Any member of the queue can approve or reject the record and the queue is treated as a single entity.`
+    ],
+    correct: [3],
+    uncertain: false
+  },
+  {
+    number: 63,
+    prompt: `Choose 1 option.
+A Platform Administrator at Cloud Kicks needs to temporarily remove one dashboard from a shared folder with several dashboards to make some required changes.
+How should the administrator achieve this?`,
+    options: [
+      `Remove View access to the shared folder`,
+      `Edit the dashboard properties and move it to a private dashboards folder`,
+      `Remove the permission set to the dashboard from the users`,
+      `Create a private group and add the dashboard to it`
+    ],
+    correct: [1],
+    uncertain: false
+  },
+  {
+    number: 64,
+    prompt: `Choose 1 option.
+The sales and service teams at Cloud Kicks would like to have more visibility into their pipeline and stay on top of every case. A Platform Administrator needs to quickly create dashboards for each of the teams but does not know where to start.
+What should the administrator do?`,
+    options: [
+      `Use the Salesforce Labs CRM Dashboards for sales teams from AppExchange.`,
+      `Use the Salesforce Labs Field Service Dashboards for service teams from AppExchange.`,
+      `Enable Einstein Analytics and build custom dashboards using advanced analytics tools.`,
+      `Manually create dashboards without using any prebuilt templates or packages.`
+    ],
+    correct: [0],
+    uncertain: false
+  },
+  {
+    number: 65,
+    prompt: `Choose 1 option.
+The VP of sales at AW Computing wants to ensure sales reps are reminded to check in on their top accounts every Monday and can track the status of those check-ins.`,
+    options: [
+      `Create a time-based workflow task.`,
+      `Use a process email alert on the account.`,
+      `Enable the creation of recurring tasks.`,
+      `Add the email action to the page layout.`
+    ],
+    correct: [2],
+    uncertain: false
+  }
+];
+
+const state = {
+  answers: Array.from({length: questions.length}, () => []),
+  submitted: false,
+  reviewMode: false,
+  reviewIndex: 0,
+  flagged: []
+};
+
+const questionsEl = document.getElementById('questions');
+const navDotsEl = document.getElementById('navDots');
+const progressBar = document.getElementById('progressBar');
+const answeredStat = document.getElementById('answeredStat');
+const selectionStat = document.getElementById('selectionStat');
+const scoreStat = document.getElementById('scoreStat');
+const submitBtn = document.getElementById('submitBtn');
+const reviewBtn = document.getElementById('reviewBtn');
+const restartBtn = document.getElementById('restartBtn');
+const summaryPanel = document.getElementById('summaryPanel');
+
+function inferMaxSelect(prompt){
+  const p = prompt.toLowerCase();
+  if(p.includes('choose 3 options')) return 3;
+  if(p.includes('choose 2 options')) return 2;
+  return 1;
+}
+function typeLabel(max){ return max === 1 ? 'Single Select' : 'Multiple Select'; }
+function letter(i){ return String.fromCharCode(65+i); }
+
+function renderNav(){
+  navDotsEl.innerHTML = questions.map(q => `
+    <a href="#q-${q.number}" class="dot" data-dot="${q.number}" aria-label="Jump to question ${q.number}">${q.number}</a>
+  `).join('');
+}
+function renderQuestions(){
+  questionsEl.innerHTML = questions.map((q, idx) => {
+    const max = inferMaxSelect(q.prompt);
+    return `
+      <article class="card" id="q-${q.number}" data-index="${idx}">
+        <div class="card-head">
+          <div class="badges">
+            <span class="badge qn">Question ${q.number}</span>
+            <span class="badge type">${typeLabel(max)}</span>
+            <span class="badge sel" id="sel-${idx}">Selected: 0 ${max === 1 ? 'option' : 'options'}</span>
+          </div>
+        </div>
+        <div class="question-text">${escapeHtml(q.prompt)}</div>
+        ${q.uncertain ? `<div class="note">Scoring uses best-effort answer due to partial source text.</div>` : ``}
+        <div class="options" role="${max===1?'radiogroup':'group'}" aria-label="Options for question ${q.number}">
+          ${q.options.map((opt, oIdx) => `
+            <label class="option" data-q="${idx}" data-o="${oIdx}">
+              <input ${max===1?'type="radio"':'type="checkbox"'} name="q-${idx}" />
+              <span class="letter">${letter(oIdx)}</span>
+              <span class="option-text">${escapeHtml(opt)}</span>
+              <span class="mark" aria-hidden="true"></span>
+            </label>
+          `).join('')}
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+function escapeHtml(str){
+  return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function setSelection(qIdx, oIdx){
+  if(state.submitted) return;
+  const q = questions[qIdx];
+  const max = inferMaxSelect(q.prompt);
+  let arr = [...state.answers[qIdx]];
+  if(max === 1){
+    arr = arr[0] === oIdx ? [] : [oIdx];
+  } else {
+    if(arr.includes(oIdx)) arr = arr.filter(x => x !== oIdx);
+    else {
+      if(arr.length < max) arr.push(oIdx);
+      else {
+        arr.shift();
+        arr.push(oIdx);
+      }
+    }
+  }
+  state.answers[qIdx] = arr.sort((a,b)=>a-b);
+  updateQuestionUI(qIdx);
+  updateStats();
+}
+function updateQuestionUI(qIdx){
+  const card = document.querySelector(`.card[data-index="${qIdx}"]`);
+  if(!card) return;
+  const max = inferMaxSelect(questions[qIdx].prompt);
+  const selected = state.answers[qIdx];
+  card.querySelectorAll('.option').forEach(opt => {
+    const o = +opt.dataset.o;
+    opt.classList.toggle('selected', selected.includes(o));
+  });
+  const selBadge = document.getElementById(`sel-${qIdx}`);
+  selBadge.textContent = `Selected: ${selected.length} ${max === 1 ? 'option' : 'options'}`;
+}
+function updateStats(){
+  const answered = state.answers.filter(a => a.length > 0).length;
+  const totalSelections = state.answers.reduce((n,a)=>n+a.length,0);
+  answeredStat.textContent = `Answered: ${answered} / ${questions.length}`;
+  selectionStat.textContent = `Selections: ${totalSelections}`;
+  progressBar.style.width = `${(answered / questions.length) * 100}%`;
+
+  document.querySelectorAll('.dot').forEach((dot, i) => {
+    dot.classList.toggle('answered', state.answers[i].length > 0);
+  });
+
+  if(state.submitted){
+    const score = computeResults();
+    scoreStat.textContent = `Score: ${score.percent}%`;
+  } else {
+    scoreStat.textContent = `Score: —`;
+  }
+}
+function computeResults(){
+  let correctQuestions = 0;
+  let answered = 0;
+  let totalSelections = 0;
+  state.flagged = [];
+  questions.forEach((q, i) => {
+    const selected = [...state.answers[i]].sort((a,b)=>a-b);
+    const correct = [...q.correct].sort((a,b)=>a-b);
+    if(selected.length) answered++;
+    totalSelections += selected.length;
+    const isCorrect = selected.length === correct.length && selected.every((v, idx) => v === correct[idx]);
+    if(isCorrect) correctQuestions++;
+    else if(selected.length === 0 || !isCorrect) state.flagged.push(i);
+  });
+  const percent = Math.round((correctQuestions / questions.length) * 100);
+  return { answered, totalSelections, correctQuestions, percent };
+}
+function applyScoringUI(){
+  questions.forEach((q, qIdx) => {
+    const card = document.querySelector(`.card[data-index="${qIdx}"]`);
+    const selected = state.answers[qIdx];
+    const correct = q.correct;
+    const isCorrectQuestion = selected.length === correct.length && [...selected].sort().every((v,i)=>v===[...correct].sort()[i]);
+    card.classList.add('locked');
+    card.classList.toggle('correct-card', isCorrectQuestion);
+    card.classList.toggle('incorrect-card', !isCorrectQuestion);
+    card.querySelectorAll('.option').forEach(opt => {
+      const oIdx = +opt.dataset.o;
+      opt.classList.remove('correct','incorrect','missed');
+      const isSelected = selected.includes(oIdx);
+      const isCorrect = correct.includes(oIdx);
+      if(isCorrect && isSelected) opt.classList.add('correct');
+      else if(!isCorrect && isSelected) opt.classList.add('incorrect');
+      else if(isCorrect && !isSelected) opt.classList.add('missed');
+    });
+  });
+
+  document.querySelectorAll('.dot').forEach((dot, i) => {
+    dot.classList.remove('flagged','correct','incorrect');
+    const q = questions[i];
+    const sel = state.answers[i];
+    const cor = q.correct;
+    const ok = sel.length === cor.length && [...sel].sort().every((v,idx)=>v===[...cor].sort()[idx]);
+    if(ok) dot.classList.add('correct');
+    else dot.classList.add('incorrect');
+    if(sel.length === 0 || !ok) dot.classList.add('flagged');
+  });
+
+  const r = computeResults();
+  summaryPanel.classList.add('show');
+  document.getElementById('sumTotal').textContent = questions.length;
+  document.getElementById('sumAnswered').textContent = r.answered;
+  document.getElementById('sumSelections').textContent = r.totalSelections;
+  document.getElementById('sumCorrectQuestions').textContent = r.correctQuestions;
+  document.getElementById('sumScore').textContent = `${r.percent}%`;
+  updateStats();
+}
+function clearScoringUI(){
+  summaryPanel.classList.remove('show');
+  document.querySelectorAll('.card').forEach(card => {
+    card.classList.remove('locked','correct-card','incorrect-card','flagged-review');
+    card.querySelectorAll('.option').forEach(opt => {
+      opt.classList.remove('correct','incorrect','missed','selected');
+    });
+  });
+  document.querySelectorAll('.dot').forEach(dot => dot.className = 'dot');
+  questions.forEach((_, i) => updateQuestionUI(i));
+  updateStats();
+}
+function submitQuiz(){
+  state.submitted = true;
+  applyScoringUI();
+}
+function restartQuiz(){
+  state.answers = Array.from({length: questions.length}, () => []);
+  state.submitted = false;
+  state.reviewMode = false;
+  state.reviewIndex = 0;
+  clearScoringUI();
+}
+function reviewNext(){
+  if(!state.submitted){
+    const firstUnanswered = state.answers.findIndex(a => a.length === 0);
+    const target = firstUnanswered >= 0 ? firstUnanswered : 0;
+    scrollToQuestion(target);
+    flashReview(target);
+    return;
+  }
+  computeResults();
+  if(!state.flagged.length) return;
+  state.reviewMode = true;
+  const idx = state.flagged[state.reviewIndex % state.flagged.length];
+  scrollToQuestion(idx);
+  flashReview(idx);
+  state.reviewIndex++;
+}
+function scrollToQuestion(idx){
+  const el = document.getElementById(`q-${idx+1}`);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+}
+function flashReview(idx){
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('flagged-review'));
+  const card = document.querySelector(`.card[data-index="${idx}"]`);
+  if(card){
+    card.classList.add('flagged-review');
+    setTimeout(() => card.classList.remove('flagged-review'), 2200);
+  }
+}
+
+const topbar = document.getElementById('topbar');
+const topbarToggle = document.getElementById('topbarToggle');
+
+function toggleTopbar(){
+  const collapsed = topbar.classList.toggle('collapsed');
+  document.body.classList.toggle('topbar-hidden', collapsed);
+  topbarToggle.textContent = collapsed ? 'Show Topbar' : 'Hide Topbar';
+  topbarToggle.setAttribute('aria-expanded', String(!collapsed));
+}
+
+topbarToggle.addEventListener('click', toggleTopbar);
+
+renderNav();
+renderQuestions();
+state.submitted = false;
+state.reviewMode = false;
+updateStats();
+
+questionsEl.addEventListener('change', e => {
+  const input = e.target.closest('input');
+  if(!input || state.submitted) return;
+  const option = input.closest('.option');
+  if(!option) return;
+  setSelection(+option.dataset.q, +option.dataset.o);
+});
+
+submitBtn.addEventListener('click', submitQuiz);
+restartBtn.addEventListener('click', restartQuiz);
+reviewBtn.addEventListener('click', reviewNext);
+
+const cards = [...document.querySelectorAll('.card')];
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+},{threshold:.08});
+cards.forEach((c,i) => {
+  c.style.animationDelay = `${Math.min(i*20, 500)}ms`;
+  observer.observe(c);
+});
+
+const sectionObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    const idx = +entry.target.dataset.index;
+    const dot = document.querySelector(`.dot[data-dot="${idx+1}"]`);
+    if(dot && entry.isIntersecting){
+      document.querySelectorAll('.dot').forEach(d=>d.classList.remove('current'));
+      dot.classList.add('current');
+    }
+  });
+},{threshold:.45});
+cards.forEach(c=>sectionObserver.observe(c));
+</script>
+</body>
+</html>
