@@ -86,7 +86,7 @@
     flex-wrap:wrap;
   }
   .brand{
-    display:flex; align-items:center; gap:12px; color:#fff;
+    display:flex; align-items:center; gap:12px; color:#fff; text-decoration:none;
   }
   .brand-icon{
     width:42px;height:42px;border-radius:14px;
@@ -392,13 +392,13 @@
   <div class="topbar" id="topbar">
     <div class="topbar-inner">
       <div class="top-row">
-        <div class="brand">
+        <a href="index.html" class="brand" aria-label="Go to home page">
           <div class="brand-icon">SF</div>
           <div>
             <h1>Salesforce Questionnaire</h1>
             <p>65 questions • interactive review • one-page exam UI</p>
           </div>
-        </div>
+        </a>
         <div class="actions">
           <button class="btn-primary" id="submitBtn">Submit</button>
           <button class="btn-secondary" id="reviewBtn">Review</button>
