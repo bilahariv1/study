@@ -433,21 +433,17 @@ Which two data loss considerations should a Platform Administrator keep in mind 
     correct: [2,3],
     uncertain: false
   },
-  {
+{
     number: 2,
     prompt: `Choose 1 option.
 Cloud Kicks has an administrator team that manages the org. The company has asked for a small subset of leadership users to have Modify All access, like the administrators have.
+
 How should the administrator team accomplish this?`,
-    options: [
-      `Create a permission set with Modify All on the relevant objects and assign it to the subset of users.`,
-      `Clone the administrator profile and assign it to the leadership users.`,
-      `Grant system administrator permissions to the leadership users.`,
-      `Create a custom permission set and grant Modify All for the needed records and objects.`
-    ],
+    options: [`Assign the standard Platform User profile to the leadership users and edit the permissions to Modify All access.`, `Assign the standard System Administrator profile to the leadership users, which includes Modify All access.`, `Clone the standard User profile for the leadership users and assign a Modify All role to grant access.`, `Assign the standard User profile to the leadership users and add a custom permission set with Modify All access.`],
     correct: [3],
     uncertain: true
   },
-  {
+{
     number: 3,
     prompt: `A Platform Administrator at Ursa Major Solar imported records into an object by mistake.
 Which two tools should the administrator use to undo this import?`,
@@ -460,7 +456,7 @@ Which two tools should the administrator use to undo this import?`,
     correct: [0,3],
     uncertain: false
   },
-  {
+{
     number: 4,
     prompt: `A Platform Administrator at Ursa Major Solar is asked to change the Work Item and Project custom object relationship from a master-detail to a lookup.
 Which scenario prevents the administrator from fulfilling the requirement?`,
@@ -473,7 +469,7 @@ Which scenario prevents the administrator from fulfilling the requirement?`,
     correct: [2],
     uncertain: false
   },
-  {
+{
     number: 5,
     prompt: `Choose 1 option.
 Which component of an approval process defines the chain of approval, determines which records can advance, and specifies where to assign approval requests?`,
@@ -486,22 +482,19 @@ Which component of an approval process defines the chain of approval, determines
     correct: [0],
     uncertain: false
   },
-  {
+{
     number: 6,
-    prompt: `When a qualified lead is converted, what happens to its related records?`,
-    options: [
-      `The lead is deleted and all associated records are removed.`,
-      `Only the lead owner is transferred to the new contact.`,
-      `Related activity history is deleted during conversion.`,
-      `Campaign history is attached to the resulting contact, account, and opportunity records.`
-    ],
+    prompt: `Choose 1 option.
+When a qualified lead is converted, what happens to its related records?`,
+    options: [`Open activities only are attached to the resulting contact, account, and opportunity records.`, `All activities are attached to the resulting contact, account, and opportunity records.`, `Records from custom objects are attached to the resulting contact, account, and opportunity records.`, `Campaign history is attached to the resulting contact, account, and opportunity records.`],
     correct: [3],
     uncertain: false
   },
-  {
+{
     number: 7,
     prompt: `Choose 1 option.
-A Platform Administrator at Cloud Kicks wants to track details around marketing efforts, including emails, trade shows, and webinars.
+A Platform Administrator at Cloud Kicks would like to use Salesforce to start tracking details around its marketing efforts. They would like to track details around emails, trade shows, and webinars. Each initiative needs to track different types of information.
+
 How should the administrator accomplish this?`,
     options: [
       `Create record types and page layouts for each type of campaign.`,
@@ -512,10 +505,12 @@ How should the administrator accomplish this?`,
     correct: [0],
     uncertain: false
   },
-  {
+{
     number: 8,
-    prompt: `A sales manager at Cloud Kicks would like a dashboard to emphasize some important data and tell a more compelling data story to the sales reps.
-How should a Platform Administrator achieve this for the sales manager?`,
+    prompt: `Choose 1 option.
+A sales manager at Cloud Kicks would like a dashboard to emphasize important data and tell a more compelling data story to the sales reps.
+
+How should a Platform Administrator achieve this?`,
     options: [
       `Use the Highlights Panel.`,
       `Assign a new Task to each rep.`,
@@ -525,7 +520,7 @@ How should a Platform Administrator achieve this for the sales manager?`,
     correct: [2],
     uncertain: false
   },
-  {
+{
     number: 9,
     prompt: `Choose 1 option.
 A Platform Administrator at Cloud Kicks has a flow in production that is supposed to create new records. However, no new records are being created.
@@ -539,7 +534,7 @@ What is causing this issue?`,
     correct: [0],
     uncertain: false
   },
-  {
+{
     number: 10,
     prompt: `Choose 1 option.
 The client services and customer support teams share the same profile but have different permission sets. The custom object Retention related list needs to be restricted to the client services team on the Lightning record page layout.
@@ -553,9 +548,12 @@ What should a Platform Administrator use to fulfill this request?`,
     correct: [3],
     uncertain: false
   },
-  {
+{
     number: 11,
-    prompt: `A question about a sales opportunity pipeline asks which feature a Platform Administrator should recommend.`,
+    prompt: `Choose 1 option.
+The Universal Containers sales team wants a visual way to manage its opportunity pipeline that allows them to see deals at once, track progress through sales stages, and quickly move opportunities forward.
+
+Which feature should a Platform Administrator recommend?`,
     options: [
       `Create a custom dashboard with opportunity pipeline charts and stage metrics.`,
       `Configure opportunity list views with custom filters and summary fields.`,
@@ -565,10 +563,12 @@ What should a Platform Administrator use to fulfill this request?`,
     correct: [3],
     uncertain: false
   },
-  {
+{
     number: 12,
-    prompt: `Universal Containers has two sales teams, sales team A and sales team B. Each team has their own role in the role hierarchy. Both roles are subordinated of the same Manager role.
-How should a Platform Administrator share records owned by sales team A with sales team B?`,
+    prompt: `Choose 1 option.
+Universal Containers has two sales teams, Sales Team A and Sales Team B. Each team has its own role in the role hierarchy. Both roles are subordinate to the same Manager role.
+
+How should a Platform Administrator share records owned by Sales Team A with Sales Team B?`,
     options: [
       `Criteria-based sharing`,
       `Hierarchical sharing`,
@@ -578,10 +578,10 @@ How should a Platform Administrator share records owned by sales team A with sal
     correct: [2],
     uncertain: false
   },
-  {
+{
     number: 13,
     prompt: `Choose 1 option.
-Which feature gives a sales team the ability to prioritize deals with recent updates in the List view and Kanban view?`,
+Which feature gives a sales team the ability to prioritize deals with recent updates in the List View and Kanban View?`,
     options: [
       `Deal Change Highlights`,
       `Big Deal Alerts`,
@@ -591,10 +591,12 @@ Which feature gives a sales team the ability to prioritize deals with recent upd
     correct: [0],
     uncertain: false
   },
-  {
+{
     number: 14,
-    prompt: `Cloud Kicks (CK) has a new Platform Administrator who is asked to put together a memo detailing Salesforce usage to budget for upcoming license purchases.
-Where should the administrator go to find out what type of licenses CK has purchased and how many are available?`,
+    prompt: `Choose 1 option.
+Cloud Kicks has a new Platform Administrator who is asked to put together a memo detailing Salesforce usage to budget for upcoming license purchases.
+
+Where should the administrator go to find out what types of licenses Cloud Kicks has purchased and how many are available?`,
     options: [
       `Usage-based entitlements related list in company information`,
       `User licenses related list in company information`,
@@ -604,7 +606,7 @@ Where should the administrator go to find out what type of licenses CK has purch
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 15,
     prompt: `When a sales rep clicks a button on an opportunity, a simple discount calculator screen should be launched.
 Which automation tool should a Platform Administrator use to build this discount calculator screen?`,
@@ -617,49 +619,38 @@ Which automation tool should a Platform Administrator use to build this discount
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 16,
-    prompt: `In an approval process, which feature allows a user to temporarily assign their approval responsibilities to another user for a predetermined time period?`,
-    options: [
-      `Queue`,
-      `Delegated Approver`,
-      `Approval Role`,
-      `Manager`
-    ],
+    prompt: `Choose 1 option.
+In an approval process, which feature allows a user to temporarily assign their approval responsibilities to another user for a predefined time period?`,
+    options: [`Queue`, `Delegated Approver`, `Approval Rule`, `Manager`],
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 17,
     prompt: `Choose 2 options.
-A user from Northern Trail Outfitters is having trouble logging into Salesforce.
-Which two steps should a Platform Administrator take to help the user log in to Salesforce?`,
-    options: [
-      `Log in as the user to unlock the user and reset the password.`,
-      `Use the unlock button on the user’s record detail page.`,
-      `Reset the password policies to allow the user to login.`,
-      `Reset password on the user’s record detail page.`
-    ],
+A user at Northern Trail Outfitters is having trouble logging in to Salesforce. The user's login history shows that the user has attempted to log in multiple times and has been locked out of the organization.
+
+Which two steps should a Platform Administrator take?`,
+    options: [`Log in as the user to unlock the user and reset the password.`, `Use the Unlock button on the user's record detail page.`, `Reset the password policies to allow the user to log in.`, `Reset the password on the user's record detail page.`],
     correct: [1,3],
     uncertain: false
   },
-  {
+{
     number: 18,
-    prompt: `At Cloud Kicks (CK), cases are being assigned a default Case Owner and showing a Created By and Last Modified By that is not expected.
-What should a Platform Administrator edit to change this behavior?`,
-    options: [
-      `Debug Logs`,
-      `Process Automation Settings`,
-      `Support Settings`,
-      `Support Processes`
-    ],
-    correct: [2],
+    prompt: `Choose 1 option.
+At Cloud Kicks, cases are being assigned a default Case Owner and showing a Created By and Last Modified By that are not expected. Cloud Kicks wants to change this to an integration user.
+
+What should a Platform Administrator edit?`,
+    options: [`Process Automation Settings`, `Support Settings`, `Support Processes`, `Case Assignment Rules`],
+    correct: [1],
     uncertain: true
   },
-  {
+{
     number: 19,
-    prompt: `A Platform Administrator needs to create a new prompt template.
-What should the administrator use to display real Salesforce data in an agent response from a prompt template?`,
+    prompt: `Choose 1 option.
+A Platform Administrator needs to create a new prompt template to automatically summarize customer cases for a sales team. The administrator wants to dynamically populate the response with data from the case record. What should the administrator use to display real Salesforce data in an agent response from a prompt template?`,
     options: [
       `Flow`,
       `Merge Fields`,
@@ -669,9 +660,9 @@ What should the administrator use to display real Salesforce data in an agent re
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 20,
-    prompt: `Choose 3 options.
+    prompt: `Choose 2 options.
 What are three characteristics of a master-detail relationship?`,
     options: [
       `The master object can be a standard or custom object.`,
@@ -683,10 +674,12 @@ What are three characteristics of a master-detail relationship?`,
     correct: [0,3,4],
     uncertain: false
   },
-  {
+{
     number: 21,
-    prompt: `Ursa Major Solar wants to automatically notify a manager about any cases awaiting a response from an agent for more than 2 hours after case creation.
-Which feature should a Platform Administrator use to fulfill this requirement?`,
+    prompt: `Choose 1 option.
+Ursa Major Solar wants to automatically notify a manager about cases awaiting a response from an agent for more than two hours after case creation.
+
+Which feature should a Platform Administrator use?`,
     options: [
       `Omni-Channel Supervisor`,
       `Formula field`,
@@ -696,20 +689,17 @@ Which feature should a Platform Administrator use to fulfill this requirement?`,
     correct: [2],
     uncertain: false
   },
-  {
+{
     number: 22,
-    prompt: `A Platform Administrator deactivates an agent to add a new topic and action.
-What happens to any ongoing user conversation with the agent?`,
-    options: [
-      `The agent will continue conversations using the deactivated agent until reactivated.`,
-      `The agent will send a system error message as a response to any new messages.`,
-      `The agent window automatically closes to prevent new messages.`,
-      `The agent will pause the conversation and resume once reactivated.`
-    ],
+    prompt: `Choose 1 option.
+A Platform Administrator deactivates an agent to add a new topic and action.
+
+What happens to any ongoing user conversations with the agent?`,
+    options: [`The agent will continue conversations using the deactivated agent until reactivated.`, `The agent will send a system error message in response to any new messages.`, `The agent window automatically closes to prevent new messages.`, `The agent will pause the conversation and resume once reactivated.`],
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 23,
     prompt: `Choose 1 option.
 A Platform Administrator at Cloud Kicks is trying to set up a new user but receives an error about a duplicate username when trying to save the user record.
@@ -723,20 +713,17 @@ What is causing this error to happen?`,
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 24,
     prompt: `Choose 1 option.
-A paragraph about sales reps at Cloud Kicks reporting each other’s account and opportunity records with an organization-wide default for Account and Opportunity set to Private.`,
-    options: [
-      `A user can view records they own and others shared with them.`,
-      `A manager can access all subordinate records through role hierarchy.`,
-      `A user can access records shared with their public group.`,
-      `A user can grant access to another team member by manually sharing a record.`
-    ],
+The sales representatives at Cloud Kicks should be able to report on each other's account and opportunity records, with the organization-wide defaults for Account and Opportunity both set to Private.
+
+What should a Platform Administrator do?`,
+    options: [`Create manual sharing to share specific account and opportunity records between the sales representatives.`, `Create an Account and Opportunity report to show records owned by each member of the Sales Team and save the report in a shared report folder.`, `Utilize Apex sharing to programmatically share records between a group of sales representatives.`, `Create an owner-based sharing rule for Accounts, sharing between a Public Group of Sales Representatives and granting Read Only Opportunity Access.`],
     correct: [3],
     uncertain: true
   },
-  {
+{
     number: 25,
     prompt: `A call center manager wants to provide agents with a case dashboard that can be drilled down by case origin, status, and owner.
 What should a Platform Administrator add to the dashboard to fulfill the request?`,
@@ -749,10 +736,12 @@ What should a Platform Administrator add to the dashboard to fulfill the request
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 26,
-    prompt: `At Cloud Kicks, when a rep needs to seek additional support help, there’s a series of actions the company wants to ensure are taken. The steps include sending an email and changing the status and owner of the case.
-What should a Platform Administrator use to give the reps an easy way to make these updates?`,
+    prompt: `Choose 1 option.
+At Cloud Kicks, when a representative needs additional support, the company wants to ensure that a series of actions occurs, including sending an email and changing the status and owner of the case.
+
+What should a Platform Administrator use to give representatives an easy way to make these updates?`,
     options: [
       `Macros with Quick Actions`,
       `Quick Text with Email Templates`,
@@ -762,34 +751,25 @@ What should a Platform Administrator use to give the reps an easy way to make th
     correct: [0],
     uncertain: false
   },
-  {
+{
     number: 27,
     prompt: `A Platform Administrator at Universal Containers is trying to deactivate a user who has left the company but is unable to do so.
 What is preventing the administrator from deactivating this user?`,
-    options: [
-      `The user has a role assignment above the manager.`,
-      `The user is the owner of a Salesforce record.`,
-      `The user has a password policy violation.`,
-      `The user is the running user of a dashboard.`
-    ],
+    options: [`The user is part of an Account Team.`, `The user is part of an Opportunity Team.`, `The user is part of an active Case Assignment Rule.`, `The user is the running user of a dashboard.`],
     correct: [3],
     uncertain: false
   },
-  {
+{
     number: 28,
     prompt: `Choose 1 option.
-The marketing director at Northern Trail Outfitters has requested that the Budget field be populated in order for the Lead Status field to be marked as qualified.
-Which tool should a Platform Administrator use to fulfill this request?`,
-    options: [
-      `Require Field`,
-      `Workflow Rule`,
-      `Validation Rule`,
-      `Lead Conversion`
-    ],
+The Marketing Director at Northern Trail Outfitters has requested that the Budget field be populated in order for the Lead Status field to be marked as Qualified.
+
+Which tool should a Platform Administrator use?`,
+    options: [`Required Field`, `Workflow Rule`, `Validation Rule`, `Lead Conversion`],
     correct: [2],
     uncertain: false
   },
-  {
+{
     number: 29,
     prompt: `Cloud Kicks wants a report to categorize accounts into small, medium, and large based on the dollar value found in the Contract Value field.
 Which feature should a Platform Administrator use to meet this request?`,
@@ -802,7 +782,7 @@ Which feature should a Platform Administrator use to meet this request?`,
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 30,
     prompt: `A Platform Administrator needs to import 65,000 new records into a custom object.
 Which tool should the administrator use?`,
@@ -815,10 +795,10 @@ Which tool should the administrator use?`,
     correct: [2],
     uncertain: false
   },
-  {
+{
     number: 31,
     prompt: `Choose 1 option.
-What is the next step an agent performs when the task within an agentic loop are all unsatisfactory?`,
+What is the next step an agent performs when the tasks within an agentic loop are all unsatisfactory?`,
     options: [
       `Routes to a live agent`,
       `Asks for additional information`,
@@ -828,22 +808,26 @@ What is the next step an agent performs when the task within an agentic loop are
     correct: [3],
     uncertain: false
   },
-  {
+{
     number: 32,
-    prompt: `A Platform Administrator creates a custom text area field and adds it to a service team’s page layout.`,
+    prompt: `Choose 1 option.
+An administrator creates a custom text area field on the Account object and adds it to the service team's pagelayout. The service team manager loves the addition of this field and wants it to appear in the highlights panel so that the service reps can quickly find it when on the Account page.
+How should the administrator accomplish this?`,
     options: [
       `In the Account object manager, create a custom compact layout.`,
       `From the page layout editor, drag the field to the highlights panel.`,
       `Make the field required and move it to the top of the page.`,
       `Create a new page layout and a new section titled highlights panel.`
     ],
-    correct: [1],
+    correct: [0],
     uncertain: false
   },
-  {
+{
     number: 33,
     prompt: `Choose 1 option.
-Northern Trail Outfitters has two different sales processes for business and partner opportunities, with different page layouts and picklist value options.`,
+Northern Trail Outfitters has two different sales processes: one for business opportunities with four stages and one for partner opportunities with eight stages. Both processes vary in page layouts and picklist values.
+
+What should a Platform Administrator configure?`,
     options: [
       `Different page layouts that control the picklist values for the opportunity types`,
       `Separate record types and sales processes for the different types of opportunities`,
@@ -853,10 +837,12 @@ Northern Trail Outfitters has two different sales processes for business and par
     correct: [1],
     uncertain: false
   },
-  {
+{
     number: 34,
-    prompt: `A sales rep typically has several open opportunities for each of their accounts.
-Which Platform Administrator suggestion would be used to obtain the total number of accounts associated with open opportunities in a report?`,
+    prompt: `Choose 1 option.
+A sales representative typically has several open opportunities for each account.
+
+Which tool should a Platform Administrator suggest to obtain the total number of accounts associated with open opportunities in a report?`,
     options: [
       `Group Rows`,
       `Bucket Column`,
@@ -866,9 +852,11 @@ Which Platform Administrator suggestion would be used to obtain the total number
     correct: [2],
     uncertain: false
   },
-  {
+{
     number: 35,
-    prompt: `A paragraph describing Universal Containers asks:
+    prompt: `Choose 1 option(Correctd till here).
+Universal Containers wants to ensure that cases are routed to the right people at the right time. The business wants to be able to move people around and adjust assistance without having to request additional organization or rely on administrator teams.
+
 Which tool allows the business to control its own assignment of work?`,
     options: [
       `Email-to-Case`,
@@ -1206,7 +1194,7 @@ GetShippingStatus`,
   {
     number: 60,
     prompt: `Choose 1 option.
-Cloud Kicks has a custom object called Shipments. The company wants to associate shipments to the accounts they are related to.
+Cloud Kicks has a custom object called Shipments. The company wants to see all the shipment items from an Account page. When an Account is deleted, the shipments should remain.
 Which type of relationship should a Platform Administrator make between Shipments and Accounts?`,
     options: [
       `Accounts should have a lookup to Shipments.`,
