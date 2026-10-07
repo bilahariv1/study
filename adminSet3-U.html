@@ -976,7 +976,7 @@ How should a Platform Administrator implement this solution?`,
   },
   {
     number: 44,
-    prompt: `Choose 1 option (Completed upto here).
+    prompt: `Choose 1 option.
 Universal Containers wants to track all stakeholders involved in its sales opportunities to ensure proper relationship management. Sales reps need to identify who has decision-making authority, who influences the buying process, and who serves as the primary contact for each deal. 
 Which feature should a Platform Administrator configure to meet this requirement?`,
     options: [
@@ -990,47 +990,48 @@ Which feature should a Platform Administrator configure to meet this requirement
   },
   {
     number: 45,
-    prompt: `A Platform Administrator needs users to choose a specific search engine from a picklist when Lead Source = Search Engine.
+    prompt: `A Platform Administrator at Universal Containers has a screen flow that helps users create new leads. When Lead Source is "Search Engine", the administrator needs to require the user to choose a specific search engine from a picklist. If Lead Source is not "Search Engine", this picklist should be hidden. 
 What is the most efficient way for the administrator to complete this requirement?`,
     options: [
-      `Create a dependent picklist based on the Lead Source field.`,
-      `Create a custom checkbox field for each search engine.`,
-      `Add a custom picklist field and set a validation rule for valid entries.`,
-      `Create a formula field that maps search engines to lead sources.`
+      `Use a conditional filter in the screen element to only show the Specific Search Engine field only when Lead Source is "Search Engine".`,
+      `Use Assignment elements; one for when Lead Source is "Search Engine" and one for everything else.`,
+      `Create a picklist for Specific Search Engine, and set conditional visibility so that it is only shown when Lead Source is "Search Engine".`,
+      `Configure a picklist for Specific Search Engine, and use a validation rule to conditionally show only when Lead Source is "Search Engine".`
     ],
     correct: [2],
     uncertain: true
   },
   {
     number: 46,
-    prompt: `Ursa Major Solar wants users to see the Top Opportunities report in the Salesforce mobile app.`,
+    prompt: `Ursa Major Solar wants to roll out the Salesforce mobile app, and the first information it wants its users to see is the Top Opportunities report. 
+What should a Platform Administrator configure to achieve this?`,
     options: [
       `Enable Today for the Salesforce mobile app.`,
       `Enable Mobile Home for the Salesforce mobile app.`,
       `Add the Dashboards tab to the Salesforce mobile app.`,
       `Add the Reports tab to the Salesforce mobile app.`
     ],
-    correct: [3],
+    correct: [1],
     uncertain: false
   },
   {
     number: 47,
     prompt: `Choose 1 option.
-A Platform Administrator is building an agent for an ecommerce support team, mentioning an agent action called updateShippingAddress.
-Which action instruction should be administered according to best practices?`,
+A Platform Administrator is creating a new action instruction for an agent. This action, named createCase, is designed to generate a new Salesforce Case record based on the user's conversation with the agent. 
+Which set of Action Instructions should the administrator use for the createCase action, according to best practices for action instructions?`,
     options: [
-      `Update the shipping address for the customer after verifying the order and account match.`,
-      `Use the shipping address field only when a ticket is escalated.`,
-      `Ignore customer address updates unless they are requested in writing.`,
-      `Request the full billing information before making any update.`
+      `This action provides the ability to create a new case record in the Salesforce system. Its function is to simply save customer information as a record. Use this when the user wants to create a case.`,
+      `Use this action to create a new Salesforce Case record. The goal is to document a customer's issue in the system. Use this when the user's intent is to create a formal record of their problem or question.`,
+      `Creates a new case record in the system for any type of customer inquiry. The purpose of this is to ensure a record of the interaction is saved.`,
+      `The createCase code snippet is configured to create a case. It runs in the background to handle the user's request to log a new issue. Its purpose is to solve the customer's issue.`
     ],
-    correct: [0],
+    correct: [1],
     uncertain: true
   },
   {
     number: 48,
     prompt: `Choose 1 option.
-A scenario involving service reps in a call center and a Platform Administrator.
+Service reps in a call center do not have assigned desks. They sit at any available desk and use the computer on that desk to access Salesforce. A Platform Administrator has been asked to streamline the login process so the reps do not have to authenticate each time they log in at a different computer. 
 Which function should the administrator use to implement this request?`,
     options: [
       `Permission Set`,
@@ -1044,7 +1045,7 @@ Which function should the administrator use to implement this request?`,
   {
     number: 49,
     prompt: `Choose 1 option.
-A paragraph about Cloud Kicks (CK) partnering with a used shoe store and second-hand bicycle emporium describes an automated business process to count open cases.
+Cloud Kicks (CK) is partnering with a used shoe store and second-hand bicycle emporium. CK has an automated business process it wants to run once a week to count the number of open cases related to an Account. 
 Which flow should a Platform Administrator recommend automating within Flow Builder for this business process?`,
     options: [
       `Scheduled flow`,
@@ -1052,12 +1053,12 @@ Which flow should a Platform Administrator recommend automating within Flow Buil
       `Automation event-triggered flow`,
       `Autolaunched flow`
     ],
-    correct: [1],
+    correct: [0],
     uncertain: false
   },
   {
     number: 50,
-    prompt: `Choose 1 option.
+    prompt: `Choose 1 option (Corrected till here).
 Cloud Kicks uses the standard Account Type field to indicate different account tiers. Users find this confusing, so management has asked that the field be changed to read Tier on the page layouts.
 How should a Platform Administrator implement this change?`,
     options: [
