@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#30206f">
+<title>Salesforce Administrator Practice Quiz — Set 2</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #172033;
+    --muted: #667085;
+    --line: #e6e8f0;
+    --purple: #6d28d9;
+    --blue: #2563eb;
+    --good: #15803d;
+    --bad: #b91c1c;
+    --shadow: 0 14px 36px rgba(14, 25, 55, .16);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background:
+      radial-gradient(circle at 18% 16%, rgba(255,255,255,.19), transparent 29%),
+      radial-gradient(circle at 86% 8%, rgba(255,255,255,.14), transparent 28%),
+      linear-gradient(135deg, #5b21b6, #2563eb 53%, #7c3aed);
+  }
+  button { font: inherit; }
+  .topbar {
+    position: fixed;
+    z-index: 1000;
+    inset: 0 0 auto;
+    color: #fff;
+    background: rgba(22, 26, 55, .82);
+    border-bottom: 1px solid rgba(255,255,255,.15);
+    box-shadow: 0 8px 30px rgba(0,0,0,.18);
+    backdrop-filter: blur(14px);
+    transition: transform .24s ease, opacity .2s ease;
+  }
+  .topbar.hidden { transform: translateY(-110%); opacity: 0; pointer-events: none; }
+  .topbar-inner { width: min(1320px, 100%); margin: auto; padding: 12px 18px; }
+  .top-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 11px; min-width: 0; color: inherit; text-decoration: none; }
+  .brand-icon {
+    display: grid; place-items: center; flex: 0 0 42px; height: 42px; border-radius: 14px;
+    color: #fff; font-weight: 900; background: linear-gradient(135deg,#a78bfa,#60a5fa);
+  }
+  .brand h1 { margin: 0; font-size: 17px; letter-spacing: .15px; }
+  .brand p { margin: 3px 0 0; color: rgba(255,255,255,.76); font-size: 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .actions button, .topbar-toggle {
+    min-height: 40px; padding: 9px 14px; border: 1px solid rgba(255,255,255,.2);
+    border-radius: 12px; color: #fff; font-weight: 750; cursor: pointer;
+    transition: transform .18s ease, filter .18s ease;
+  }
+  .actions button:hover, .topbar-toggle:hover { transform: translateY(-1px); filter: brightness(1.08); }
+  .btn-primary { background: linear-gradient(135deg,#8b5cf6,#3b82f6); box-shadow: 0 7px 18px rgba(59,130,246,.24); }
+  .btn-secondary { background: rgba(255,255,255,.1); }
+  .stats { display: grid; grid-template-columns: repeat(5, minmax(90px,1fr)); gap: 8px; margin-top: 10px; }
+  .stat { min-width: 0; padding: 8px 11px; border: 1px solid rgba(255,255,255,.13); border-radius: 13px; background: rgba(255,255,255,.1); }
+  .stat-label { color: rgba(255,255,255,.72); font-size: 10px; letter-spacing: .7px; text-transform: uppercase; }
+  .stat-value { margin-top: 2px; font-size: 16px; font-weight: 850; }
+  .progress { height: 8px; margin-top: 9px; overflow: hidden; border: 1px solid rgba(255,255,255,.13); border-radius: 99px; background: rgba(255,255,255,.13); }
+  .progress-bar { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#c4b5fd,#93c5fd,#fff); transition: width .25s ease; }
+  .topbar-toggle {
+    position: fixed; z-index: 1100; top: 12px; right: 12px; display: none;
+    color: #fff; border-color: rgba(255,255,255,.22); background: rgba(17,24,39,.82);
+    box-shadow: 0 8px 20px rgba(15,23,42,.25);
+  }
+  .shell { width: min(1180px, 100%); margin: auto; padding: 145px 18px 40px; }
+  .panel, .question-card {
+    border: 1px solid rgba(255,255,255,.72); border-radius: var(--radius);
+    background: rgba(255,255,255,.97); box-shadow: var(--shadow);
+  }
+  .panel { margin-bottom: 16px; padding: 16px; }
+  .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .panel-title { font-size: 18px; font-weight: 850; }
+  .subtitle { color: var(--muted); font-size: 13px; }
+  .dots { display: grid; grid-template-columns: repeat(auto-fit,minmax(38px,1fr)); gap: 7px; }
+  .dot {
+    min-width: 0; height: 36px; padding: 0 3px; border: 1px solid #e1e4ef; border-radius: 11px;
+    color: #475467; background: #f4f5fb; font-size: 12px; font-weight: 850; cursor: pointer;
+  }
+  .dot.answered { color: #312e81; border-color: #c4b5fd; background: linear-gradient(135deg,#ddd6fe,#bfdbfe); }
+  .dot.current { outline: 3px solid rgba(109,40,217,.2); }
+  .dot.correct { color: #166534; border-color: #86efac; background: #dcfce7; }
+  .dot.incorrect { color: #991b1b; border-color: #fecaca; background: #fee2e2; }
+  .results { display: none; }
+  .results.visible { display: block; }
+  .result-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 9px; }
+  .result { padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fafbff; }
+  .result-label { color: var(--muted); font-size: 10px; letter-spacing: .45px; text-transform: uppercase; }
+  .result-value { margin-top: 4px; font-size: 21px; font-weight: 850; }
+  .questions { display: grid; gap: 15px; }
+  .question-card { padding: 18px; scroll-margin-top: 165px; }
+  .qhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .qmeta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge { padding: 6px 10px; border-radius: 99px; font-size: 11px; font-weight: 850; }
+  .qnum { color: #4c1d95; background: linear-gradient(135deg,#ede9fe,#dbeafe); }
+  .qtype { color: #475467; border: 1px solid #e5e7f2; background: #f3f4fb; }
+  .qtext { margin: 0 0 14px; font-size: 17px; line-height: 1.55; font-weight: 780; white-space: pre-line; }
+  .options { display: grid; gap: 9px; }
+  .option { position: relative; }
+  .option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .opt-label {
+    display: flex; align-items: flex-start; gap: 11px; min-height: 54px; padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: 15px; background: linear-gradient(180deg,#fff,#fafbff);
+    cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .opt-label:hover { transform: translateY(-1px); border-color: #c4b5fd; }
+  .letter {
+    display: grid; flex: 0 0 30px; width: 30px; height: 30px; place-items: center;
+    border: 1px solid #dbe1ff; border-radius: 10px; color: #4338ca; background: #eef2ff; font-weight: 900;
+  }
+  .control { position: relative; flex: 0 0 20px; width: 20px; height: 20px; margin-top: 5px; border: 2px solid #c8cde0; border-radius: 50%; background: #fff; }
+  .option.multi .control { border-radius: 6px; }
+  .option input:checked + .opt-label { border-color: #a78bfa; background: linear-gradient(135deg,#f0eafe,#e7efff); }
+  .option input:checked + .opt-label .control { border-color: var(--purple); background: linear-gradient(135deg,#7c3aed,#2563eb); }
+  .option input:checked + .opt-label .control::after { position: absolute; inset: 4px; border-radius: 50%; background: #fff; content: ""; }
+  .option.multi input:checked + .opt-label .control::after { inset: 4px 3px 6px; border: solid #fff; border-width: 0 0 3px 3px; border-radius: 0; background: transparent; transform: rotate(-45deg); }
+  .option input:focus-visible + .opt-label { outline: 3px solid rgba(37,99,235,.35); outline-offset: 2px; }
+  .question-card.locked input { pointer-events: none; }
+  .option.correct .opt-label { border-color: rgba(22,163,74,.4); background: #ecfdf3; }
+  .option.correct .letter { border-color: #bbf7d0; color: #166534; background: #dcfce7; }
+  .option.incorrect .opt-label { border-color: rgba(239,68,68,.4); background: #fff1f2; }
+  .option.incorrect .letter { border-color: #fecaca; color: #991b1b; background: #fee2e2; }
+  .option.missed .opt-label { border: 2px dashed #f59e0b; background: #fffbeb; }
+  .legend { display: none; flex-wrap: wrap; gap: 8px; margin-top: 12px; color: var(--muted); font-size: 12px; font-weight: 750; }
+  .legend.visible { display: flex; }
+  .unavailable { padding: 13px; border: 1px dashed #f59e0b; border-radius: 13px; color: #854d0e; background: #fffbeb; line-height: 1.5; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  @media (max-width: 720px) {
+    .topbar-toggle { display: inline-flex; }
+    .topbar-inner { padding: 12px 14px 11px; }
+    .shell { padding: 205px 13px 30px; }
+    body.menu-hidden .shell { padding-top: 62px; }
+    .brand { width: 100%; padding-right: 112px; }
+    .brand h1 { font-size: 15px; }
+    .actions { width: 100%; }
+    .actions button { flex: 1 1 100px; min-height: 38px; padding: 8px 10px; }
+    .stats { grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; }
+    .stat { padding: 6px; }
+    .stat-label { font-size: 8px; letter-spacing: .2px; }
+    .stat-value { font-size: 13px; }
+    .result-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .question-card { padding: 14px; scroll-margin-top: 65px; }
+    .qtext { font-size: 16px; }
+    .opt-label { padding: 11px; }
+  }
+  @media (max-width: 420px) {
+    .shell { padding-left: 10px; padding-right: 10px; }
+    .brand p { font-size: 10px; }
+    .dot { height: 33px; font-size: 11px; }
+    .panel { padding: 12px; }
+    .qtext { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+  <button class="topbar-toggle" id="topbarToggle" type="button" aria-controls="topbar" aria-expanded="true">Hide menu</button>
+  <header class="topbar" id="topbar">
+    <div class="topbar-inner">
+      <div class="top-row">
+        <a class="brand" href="index.html" aria-label="Go to study pages">
+          <div class="brand-icon" aria-hidden="true">SF</div>
+          <div>
+            <h1>Salesforce Administrator — Set 2</h1>
+            <p>Practice quiz · 67 entries · answers reviewed against Salesforce behavior</p>
+          </div>
+        </a>
+        </div>
+        <div class="actions" aria-label="Quiz controls">
+          <button class="btn-primary" id="submitBtn" type="button">Submit</button>
+          <button class="btn-secondary" id="reviewBtn" type="button">Review answers</button>
+          <button class="btn-secondary" id="restartBtn" type="button">Restart</button>
+        </div>
+      </div>
+      <div class="stats" aria-live="polite">
+        <div class="stat"><div class="stat-label">Answered</div><div class="stat-value" id="answeredStat">0 / 67</div></div>
+        <div class="stat"><div class="stat-label">Selections</div><div class="stat-value" id="selectionStat">0</div></div>
+        <div class="stat"><div class="stat-label">Correct</div><div class="stat-value" id="correctStat">—</div></div>
+        <div class="stat"><div class="stat-label">Score</div><div class="stat-value" id="scoreStat">—</div></div>
+        <div class="stat"><div class="stat-label">Mode</div><div class="stat-value" id="modeStat">Attempt</div></div>
+      </div>
+      <div class="progress" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="67" aria-valuenow="0">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="panel" aria-labelledby="navTitle">
+      <div class="panel-heading">
+        <div>
+          <div class="panel-title" id="navTitle">Question navigator</div>
+          <div class="subtitle">Select a number to jump to that question.</div>
+        </div>
+      </div>
+      <div class="dots" id="dots"></div>
+    </section>
+    <section class="panel results" id="results" aria-labelledby="resultsTitle" aria-live="polite">
+      <div class="panel-heading"><div><div class="panel-title" id="resultsTitle">Results summary</div><div class="subtitle">Question 47 is excluded because its text and options are unreadable in the PDF.</div></div></div>
+      <div class="result-grid">
+        <div class="result"><div class="result-label">Total entries</div><div class="result-value" id="rTotal">67</div></div>
+        <div class="result"><div class="result-label">Answered</div><div class="result-value" id="rAnswered">0</div></div>
+        <div class="result"><div class="result-label">Correct / 66 scorable</div><div class="result-value" id="rCorrect">0</div></div>
+        <div class="result"><div class="result-label">Score</div><div class="result-value" id="rScore">0%</div></div>
+      </div>
+    </section>
+    <section class="questions" id="quiz" aria-label="Questions"></section>
+  </main>
+
+<script>
+const questions = [
+  {id:"q1",n:"1",type:"single",text:"A Platform Administrator at Cloud Kicks would like to use Salesforce to start tracking details around marketing efforts. They would like to track details around emails, trade shows, and webinars. Additionally, each of these initiatives will need to track different types of information. How should the administrator accomplish this?",options:["Use campaign hierarchies to organize campaign types.","Create a custom field on the Campaign object for the type of initiative.","Create a custom report type with relevant fields.","Create record types and page layouts for each type of campaign."],answer:["D"]},
+  {id:"q2",n:"2",type:"multi",choose:2,text:"Universal Containers’ Platform Administrator has been asked to create a many-to-many relationship between two existing custom objects. Which two steps should the administrator take when enabling the many-to-many relationship?",options:["Create two master-detail relationships on the new object.","Create URL fields on a custom object.","Create two lookup relationships on the new object.","Create a junction custom object."],answer:["A","D"]},
+  {id:"q3",n:"3",type:"single",text:"A Platform Administrator at Cloud Kicks has a flow in production that is supposed to create new records. However, no new records are being created. What is causing the issue?",options:["The flow is inactive.","The flow URL is deactivated.","The flow trigger is missing.","The flow is read-only."],answer:["A"]},
+  {id:"q4",n:"4",type:"multi",choose:2,text:"Ursa Major Solar’s Platform Administrator is editing the page layout for a new custom object. A text area field was accidentally removed from the page layout and needs to be restored. What are two methods for achieving this goal?",options:["Restore the field from the Recycle Bin within 15 days.","From the Fields palette, drag the field into the layout.","Clone a layout from a different profile and use Save As.","Restore the original page layout from a sandbox."],answer:["B","D"]},
+  {id:"q5",n:"5",type:"single",text:"Senior leadership wants to be notified of any opportunities over $250,000 with more than a 75% probability of closing. Which feature should a Platform Administrator set up to facilitate this?",options:["Guidance for Success","Reports and Dashboards","Similar Opportunities","Big Deal Alerts"],answer:["D"]},
+  {id:"q6",n:"6",type:"single",text:"Northern Trail Outfitters wants emails received from customers to generate cases automatically. How should a Platform Administrator ensure that the emails are sent to the correct queue?",options:["Create an escalation rule to send cases to the correct queue.","Use a custom email service to set the case owner upon creation.","Use a flow to identify the correct queue and assign the case.","Configure Email-to-Case so emails are delivered to the correct queue."],answer:["D"]},
+  {id:"q7",n:"7",type:"multi",choose:3,text:"Sales reps miss fields when filling out an opportunity record through the sales process. Reps need to move forward in stages but are unable to enter a previous stage. Which three options should a Platform Administrator use to address this need?",options:["Enable guided selling.","Mark fields required on the page layout.","Use validation rules.","Configure Opportunity Path.","Use Flow to mark fields required."],answer:["B","C","D"]},
+  {id:"q8",n:"8",type:"single",text:"A Platform Administrator at Universal Containers has a screen flow that helps users create new leads. When Lead Source is “Search Engine,” the administrator needs users to choose a specific search engine from a picklist. If Lead Source is not “Search Engine,” this picklist should be hidden. What is the most efficient way to complete this requirement?",options:["Configure a validation rule to conditionally show the Specific Search Engine field when Lead Source is “Search Engine.”","Use assignment elements, one for when Lead Source is “Search Engine” and one for everything else.","Use a conditional filter in the screen element to show the Specific Search Engine field only when Lead Source is “Search Engine.”","Create the picklist and set conditional visibility so it is shown only when Lead Source is “Search Engine.”"],answer:["D"]},
+  {id:"q9",n:"9",type:"single",text:"A Platform Administrator has reviewed an upcoming critical update. How should the administrator proceed with activation of the critical update?",options:["Activate the critical update in production.","Allow the critical update to auto-activate.","Activate the critical update in a sandbox.","Allow the critical update to auto-activate in a sandbox."],answer:["C"]},
+  {id:"q10",n:"10",type:"single",text:"A Platform Administrator at Cloud Kicks has set up a junior administrator as a delegated administrator in Salesforce. What should the Platform Administrator consider regarding delegated administrators?",options:["Delegated administrators cannot modify permission sets.","Delegated administrators can update field-level security on standard objects.","Delegated administrators can unlock users but cannot reset passwords.","Delegated administrators cannot assign users to profiles."],answer:["A"]},
+  {id:"q11",n:"11",type:"single",text:"At Cloud Kicks, sales reps use discounts on opportunity records to help win sales on particular products. When an opportunity is won, they have to manually apply the discount to the related opportunity products. The sales manager wants to automate this time-consuming task. What should a Platform Administrator use to deliver this requirement?",options:["Approval Process","Formula Field","Prebuilt Macro","Flow Builder"],answer:["D"]},
+  {id:"q12",n:"12",type:"multi",choose:2,text:"Ursa Major Solar wants to assist users with a guided expense report process to simplify submissions, routing, and authorizations. Which two tools should a Platform Administrator use to build this solution?",options:["Validation Rule","Quick Action","Approval Process","Flow Builder"],answer:["C","D"]},
+  {id:"q13",n:"13",type:"single",text:"A Platform Administrator at Cloud Kicks needs to export a file of closed-won opportunities from the last 90 days. The file should include the Opportunity Name, ID, Close Date, and Amount. What should the administrator use to export this file?",options:["Data Import Wizard","Data Loader","Data Cloud Connection","Data Export Service"],answer:["B"]},
+  {id:"q14",n:"14",type:"single",text:"Cloud Kicks wants to leverage roll-up summaries on the Account object. Which standard object supports this roll-up summary natively?",options:["Campaigns","Contact","Case","Opportunity"],answer:["D"]},
+  {id:"q15",n:"15",type:"single",text:"A Platform Administrator at Ursa Major Solar wants to add prepopulated subjects for Tasks and Events. Tasks should have the subjects “Schedule Site Visit” and “Send Contract,” while Events should have “Site Visit” and “Ride Along.” What should the administrator configure?",options:["Include all four values in the Activity Subject field picklist.","Create a custom Subject picklist field on Activity and add the values.","Add the values to the Task and Event Subject picklists respectively.","Add the values to the predefined field values for the global actions New Event and New Task."],answer:["D"]},
+  {id:"q16",n:"16",type:"single",text:"How should a Platform Administrator provide users with individualized views of data on a dashboard?",options:["Set View Dashboard As to another person.","Create a Dynamic Dashboard.","Add a Dashboard Filter to change the dashboard view.","Set View Dashboard As to Me."],answer:["B"]},
+  {id:"q17",n:"17",type:"single",text:"A Platform Administrator creates a custom text area field on the Account object and adds it to the service team’s page layout. The service team manager wants it to appear in the highlights panel so service reps can quickly find it on the Account page. How should the administrator accomplish this?",options:["Create a new page layout and a new section titled Highlights Panel.","From the page layout editor, drag the field to the Highlights Panel.","In Account Object Manager, create a custom compact layout.","Make the field required and move it to the top of the page."],answer:["C"]},
+  {id:"q18",n:"18",type:"single",text:"Cloud Kicks uses the standard Account Type field to indicate different account tiers. Users find this confusing, so management has asked that the field be changed to read “Tier” on page layouts. How should a Platform Administrator implement this change?",options:["Create a global picklist value set.","Build a custom field called Tier and delete Type.","Edit the Type field and change its name.","Use Rename Tabs and Labels."],answer:["D"]},
+  {id:"q19",n:"19",type:"single",text:"Cloud Kicks has implemented an Employee Agent to answer benefits questions for its employees. How should a Platform Administrator prevent the agent from responding to staff members’ questions about the CFO’s private health plan and benefits?",options:["Modify the agent’s instructions and guardrails to block questions related to the CEO’s health plan.","Configure assignment rules to assign the agent to employee data.","Ensure users’ permissions and field-level security restrict access to the CFO’s health plan.","Train the agent on employee health plans instead of the CFO’s health plan."],answer:["C"]},
+  {id:"q20",n:"20",type:"single",text:"The VP of sales at Cloud Kicks has a standard sales profile and is receiving an error message that prevents them from saving an opportunity. A Platform Administrator attempted the same edit without receiving an error. How should the administrator troubleshoot this issue?",options:["Ask the user for their password so the administrator can log in as them.","Log in as a system administrator to troubleshoot.","Use an AppExchange product to troubleshoot.","Use Login As to log in as the user."],answer:["D"]},
+  {id:"q21",n:"21",type:"single",text:"At Cloud Kicks (CK), cases are being assigned a default Case Owner and showing a Created By and Last Modified By that is not expected. CK wants to change this to an integration user to alleviate confusion with the business. What should a Platform Administrator edit to change this in Salesforce?",options:["Process Automation Settings","Support Settings","Debug Logs","Support Processes"],answer:["A"]},
+  {id:"q22",n:"22",type:"single",text:"A Platform Administrator assigned a custom profile based on the Minimum Access - Salesforce profile to a group of new users and assigned them several existing permission sets. However, when the users log in, they do not see the Lightning interface. Which action should the administrator take to give the users access to Lightning Experience?",options:["Create a page in Lightning App Builder with the org as default.","Assign a permission to enable Lightning Experience User.","Enable the Enhanced Interface for User Access Policies.","Add a Lightning component to a layout."],answer:["B"]},
+  {id:"q23",n:"23",type:"single",text:"A sales manager receives a URL to a Dashboard folder containing several dashboards. However, when the sales manager clicks the URL, a message appears: “We couldn’t find the record you’re trying to access.” What is the reason for this?",options:["The sales manager needs the correct sales user profile.","The Dashboard folder is set to Private.","The sales manager does not have the correct permission set.","View access has not been granted to the Dashboard folder."],answer:["D"]},
+  {id:"q24",n:"24",type:"single",text:"A Platform Administrator needs to configure an approval process for the sales team when opportunities that meet particular conditions are closed. How should the administrator make sure the right records are included in the process?",options:["Create a screen flow.","Add a validation rule to the opportunity.","Add specific Entry Criteria.","Use Dynamic Forms to display a button."],answer:["C"]},
+  {id:"q25",n:"25",type:"single",text:"The Activity Timeline is missing from the Account record page. What should a Platform Administrator do to correct this?",options:["Add a button for the Activity Timeline in the Object Manager for Account.","Run a report to verify whether any activities have been logged for the Account.","Update the user’s permission to allow Edit access to the Activity Timeline.","Add the standard Activities component to the Account Lightning record page."],answer:["D"]},
+  {id:"q26",n:"26",type:"single",text:"Cloud Kicks has an administrator team that manages the org. The company has asked for a small subset of leadership users to have Modify All access, like the administrators have. How should the administrator team accomplish this?",options:["Clone the standard User profile and assign a Modify All role to the leadership users.","Assign the standard User profile to the leadership users and add a custom permission set with Modify All access.","Assign the standard Platform User profile and edit its permissions to Modify All access.","Assign the standard System Administrator profile to the leadership users."],answer:["B"]},
+  {id:"q27",n:"27",type:"multi",choose:2,text:"Which two actions should a Platform Administrator perform with Case escalation rules?",options:["Send email notifications.","Change the Case Priority.","Reassign the Case.","Reopen the Case."],answer:["A","C"]},
+  {id:"q28",n:"28",type:"single",text:"Management at Universal Containers would like to share dashboard components with their team in Chatter but currently does not have access to this capability. How should a Platform Administrator make this functionality available to management?",options:["Set View Dashboard As to the dashboard viewer.","Enable reporting snapshots.","Enable dashboard feed tracking.","Select Download Chart on the component."],answer:["C"]},
+  {id:"q29",n:"29",type:"single",text:"Users at Cloud Kicks are reporting different options when updating a custom picklist on the Opportunity object based on the kind of opportunity. Where should a Platform Administrator update the picklist options?",options:["Fields and Relationships","Related Lookup Filters","Picklist Value Sets","Record Type"],answer:["D"]},
+  {id:"q30",n:"30",type:"single",text:"A sales rep has a list of 300 accounts with contacts that they want to load at one time. Which tool should a Platform Administrator use to import the records to Salesforce?",options:["Data Import Wizard","Manual Import","Data Loader","Dataloader.io"],answer:["A"]},
+  {id:"q31a",n:"31a",type:"single",text:"Once an opportunity reaches the negotiation stage at Cloud Kicks, the Amount field becomes required for sales users. Sales managers need to be able to move opportunities into this stage without knowing the amount. How should a Platform Administrator require this field during the negotiation stage for sales users but allow their managers to make changes?",options:["Configure a validation rule to meet the criteria.","Create a formula field to fill in the field for managers.","Assign the Administrator profile to the managers.","Make the field required for all users."],answer:["A"]},
+  {id:"q31b",n:"31b",type:"single",text:"Once an opportunity reaches the negotiation stage at Cloud Kicks, the Amount field becomes required for sales users. Sales managers need to be able to move opportunities into this stage without knowing the amount. How should a Platform Administrator require this field during the negotiation stage for sales users but allow their managers to make changes?",options:["Configure a validation rule to meet the criteria.","Create a formula field to fill in the field for managers.","Assign the Administrator profile to the managers.","Make the field required for all users."],answer:["A"]},
+  {id:"q32",n:"32",type:"single",text:"The Cloud Kicks sales team has asked that two of the fields appearing on Opportunity cards in Kanban view be changed to make the cards more meaningful. Which feature should a Platform Administrator access to make this change?",options:["Compact Layout","Record Type","Kanban Settings","Page Layout"],answer:["A"]},
+  {id:"q33a",n:"33a",type:"single",text:"Northern Trail Outfitters has two different sales processes: one for business opportunities with four stages and one for partner opportunities with eight stages. Both processes will vary in page layouts and picklist value options. What should a Platform Administrator configure to meet these requirements?",options:["Validation rules that ensure users enter accurate sales stage information.","Different page layouts that control picklist values for opportunity types.","Public groups to limit record types and sales processes for opportunities.","Separate record types and sales processes for the different types of opportunities."],answer:["D"]},
+  {id:"q33b",n:"33b",type:"single",text:"Northern Trail Outfitters has two different sales processes: one for business opportunities with four stages and one for partner opportunities with eight stages. Both processes will vary in page layouts and picklist value options. What should a Platform Administrator configure to meet these requirements?",options:["Validation rules that ensure users enter accurate sales stage information.","Different page layouts that control picklist values for opportunity types.","Public groups to limit record types and sales processes for opportunities.","Separate record types and sales processes for the different types of opportunities."],answer:["D"]},
+  {id:"q34",n:"34",type:"single",text:"Leadership at Cloud Kicks wants to go beyond knowing how long a case has been open to knowing how long a case has sat with different teams. Which tool gives a Platform Administrator the ability to track the time a case sits and provide relevant reporting?",options:["Milestones with Business Hours","Case Assignment Rules with Business Hours","Escalation Rules with Business Hours","Record-Triggered Flows with Business Hours"],answer:["A"]},
+  {id:"q35",n:"35",type:"single",text:"A Platform Administrator is creating a new action instruction for an agent. This action, named createCase, is designed to generate a new Salesforce Case record based on the user’s conversation with the agent. Which set of Action Instructions should the administrator use for the createCase action, according to best practices?",options:["“This action provides the ability to create a new case record in Salesforce. Its function is to save customer information as a record. Use this when the user wants to create a case.”","“The createCase code snippet is configured to create a case. It runs in the background to handle the user’s request to log a new issue. Its purpose is to solve the customer’s issue.”","“Creates a new case record in the system for any type of customer inquiry. The purpose is to ensure a record of the interaction is saved.”","“Use this action to create a new Salesforce Case record. The goal is to document a customer’s issue in the system. Use this when the user’s intent is to create a formal record of their problem or question.”"],answer:["D"]},
+  {id:"q36",n:"36",type:"single",text:"Northern Trail Outfitters uses a custom Invoice object to collect customer payment information from an external billing system. The System field needs to be filled in on every Invoice record. How should a Platform Administrator ensure this requirement?",options:["Create a flow to update the field.","Define an approval process for the field.","Require the field on the record type.","Make the field universally required."],answer:["D"]},
+  {id:"q37",n:"37",type:"single",text:"A sales rep at Ursa Major Solar has launched a series of networking events, hosting one event per month, and wants to report on Campaign ROI by month and series. How should a Platform Administrator set up the Campaign to simplify reporting?",options:["Configure Campaign Member Statuses to record which event members attended.","Use Campaign Hierarchy where the monthly events roll up to a parent Campaign.","Create individual Campaigns that all have the same name.","Add different record types for the monthly event types."],answer:["B"]},
+  {id:"q38",n:"38",type:"single",text:"A Platform Administrator is building an agent to nurture leads. How does Agentforce SDR help?",options:["Generate a dynamic call script and talking points for human sales reps to use.","Answer the lead’s questions with responses grounded in company data.","Analyze the performance of human sales reps and provide coaching tips.","Autonomously negotiate pricing with the lead and close the final deal."],answer:["B"]},
+  {id:"q39",n:"39",type:"single",text:"Cloud Kicks is concerned that not everyone on the sales team is entering data into accounts and opportunities they own. The team is also concerned that information changes may not be updated in Salesforce. A Platform Administrator wants a better understanding of data quality and record completeness. What should the administrator do?",options:["Configure the fields as required fields on the page layout.","Create a report for Accounts and Opportunities highlighting missing data.","Explore AppExchange for data quality and record completeness solutions.","Subscribe the sales reps to a monthly report for accounts and opportunities."],answer:["B"]},
+  {id:"q40",n:"40",type:"single",text:"A Platform Administrator wants to customize the navigation menu for users in the Salesforce mobile app. The organization has not implemented any Lightning apps for mobile use. Which statement about Mobile Only app navigation is correct?",options:["The Mobile Only app can be customized to show different navigation menus for different user profiles and permission sets.","Lightning pages and Visualforce pages automatically appear in Mobile Only navigation without tabs being created first.","The first four items in the Mobile Only navigation menu appear both in the menu and in the navigation bar at the bottom of the screen.","The Mobile Only app automatically includes all standard Salesforce objects in the navigation menu based on user permissions."],answer:["C"]},
+  {id:"q41",n:"41",type:"single",text:"Universal Containers wants collaborative selling where multiple roles work together on customer accounts. Sales reps need full access to assigned accounts, while support reps and sales engineers need access to opportunities and cases related to specific accounts. The sales manager wants to automatically add the same team members to multiple accounts. Which feature should a Platform Administrator configure?",options:["Set up default account teams with specified access levels for different team roles.","Use permission sets to provide additional access to account-related records.","Configure role hierarchy to automatically grant account access to appropriate teams.","Create sharing rules to grant access to opportunities and cases for support teams."],answer:["A"]},
+  {id:"q42",n:"42",type:"single",text:"Sales reps at Ursa Major Solar are having difficulty managing deals. Leadership has asked a Platform Administrator to help sales reps prioritize and close more deals. What should the administrator configure?",options:["Einstein Opportunity Scoring","Einstein Lead Scoring","Einstein Search Personalization","Einstein Activity Capture"],answer:["A"]},
+  {id:"q43",n:"43",type:"single",text:"A Platform Administrator needs to create a prompt template to automatically summarize customer cases for a sales team and dynamically populate the response with data from the case record. What should the administrator use to display real Salesforce data in an agent response from a prompt template?",options:["Flow","Agent Instructions","Picklists","Merge Fields"],answer:["D"]},
+  {id:"q44",n:"44",type:"single",text:"Cloud Kicks has a custom object called Shipments. The company wants to see all shipment items from an Account page. When an Account is deleted, the shipments should remain. Which relationship should a Platform Administrator make between Shipments and Accounts?",options:["Shipments should have a lookup to Account.","Shipments should have a master-detail relationship to Accounts.","Accounts should have a master-detail relationship to Shipments.","Accounts should have a lookup to Shipments."],answer:["A"]},
+  {id:"q45",n:"45",type:"single",text:"A Platform Administrator created a new prompt template and is testing it. Every time the administrator tests the template, it gives a different response. Why is the prompt template giving different responses each time it runs?",options:["Prompt Builder caches the language model’s response, so the prompt is only sent once for each template.","Each time the administrator runs a prompt template in Prompt Builder, it creates a unique call to the large language model.","Prompt Builder runs a simulated call to save costs, so the prompt is never sent to the actual model.","The prompt is only sent to the model after the template is deployed to a live agent, not when run in the builder."],answer:["B"]},
+  {id:"q46",n:"46",type:"single",text:"Which Salesforce feature allows a Platform Administrator to automate the routing of records to specific users for review and decision-making based on predefined criteria?",options:["Assignment Rules","Schema Builder","Approval Process","Validation Rules"],answer:["C"]},
+  {id:"q47",n:"47",type:"unavailable",text:"The PDF page for Question 47 contains only the question number and response controls; the question text and answer options are not readable.",options:[],answer:[]},
+  {id:"q48",n:"48",type:"single",text:"A VP of sales needs to report on records owned by individuals in various parts of the role hierarchy. The organization-wide default is set to Private. What should a Platform Administrator configure to achieve this?",options:["Field-Level Security","Permission Sets","Sharing Rules","Restriction Rules"],answer:["C"]},
+  {id:"q49",n:"49",type:"single",text:"Universal Containers wants to ensure cases are routed to the right people at the right time. The support organization is growing, and the business wants to move people around and adjust work without requesting extra assistance or relying on administrators. Which tool allows the business to control its own assignment of work?",options:["Case Assignment Rules","Email-to-Case","Lead Assignment Rules","Omni-Channel"],answer:["D"]},
+  {id:"q50",n:"50",type:"multi",choose:2,text:"Cloud Kicks needs to show different picklist values for sales and marketing users. Which two options meet this requirement?",options:["One page layout; two record types; one picklist","One record type, two profiles; one picklist","Two page layouts, one record type, two picklists","Two permission sets, one record type, one picklist"],answer:["A","C"]},
+  {id:"q51",n:"51",type:"single",text:"Universal Containers (UC) has a private sharing model for Opportunities and uses Opportunity teams. Criteria-based sharing rules are not used. A sales rep leaves the company and their user record is deactivated. The rep is later rehired in the same role; the administrator reactivates the old user and adds them to the same default Opportunity teams, but they can no longer see the same records they worked on before leaving. What is the likely cause?",options:["The records were manually shared with the user.","Permission sets were removed when the user was deactivated.","The stage of the opportunity records was changed to Closed Lost.","The record type of the opportunity records was changed."],answer:["A"]},
+  {id:"q52",n:"52",type:"single",text:"Ursa Major Solar classifies its accounts as Silver, Gold, or Platinum Level. New cases for Silver or Gold partners should go to the Regular Support Queue. Cases for Platinum accounts should automatically go to the Priority Support Queue. What should a Platform Administrator use?",options:["Escalation Rules","Assignment Rules","Workflow Rules","Case Rules"],answer:["B"]},
+  {id:"q53",n:"53",type:"single",text:"Northern Trail Outfitters has the Case object set to Private. The support manager is concerned reps have broader data access than expected and can see all cases on their group’s dashboards. What is causing this?",options:["Dashboard Filters","Public Dashboards","Dashboard Subscriptions","The dashboard’s running user"],answer:["D"]},
+  {id:"q54",n:"54",type:"single",text:"A Platform Administrator at Cloud Kicks is setting up a new Salesforce instance. Marketers need access to Opportunities to maintain campaign relationships on each opportunity. The administrator decides to assign the Marketing User profile. What should the administrator do next?",options:["Edit the role to enable Sales access.","Add a custom permission set to include Opportunity.","Configure the assigned apps to include Opportunity.","Edit the object permissions to include Opportunity."],answer:["B"]},
+  {id:"q55",n:"55",type:"multi",choose:2,text:"An administrator at DreamHouse Realty needs to create customized pages for the Salesforce mobile app. Which two types of pages should a Platform Administrator build and customize using Lightning App Builder?",options:["User page","Record page","Dashboard page","App page"],answer:["B","D"]},
+  {id:"q56",n:"56",type:"single",text:"Cloud Kicks has hired a new sales executive who wants to implement a document merge solution in Salesforce. How should a Platform Administrator implement this solution?",options:["Install a package from the Partner Portal.","Create a managed package in AppExchange.","Configure the package from Salesforce Setup.","Download the solution from AppExchange."],answer:["D"]},
+  {id:"q57",n:"57",type:"single",text:"Agentforce is escalating cases to the support team, but the team complains they have no context and must ask the customer to repeat everything. Which configuration issue is the most likely cause?",options:["The support team members are missing the Agentforce permission set.","The agent’s instructions are preventing the user history and context from being saved.","The support team’s Case page layout is missing the agent history component.","The handoff is creating a new case instead of transferring the existing session."],answer:["D"]},
+  {id:"q58",n:"58",type:"single",text:"How should a Platform Administrator view Currencies, Fiscal Year settings, and Business Hours in Salesforce?",options:["User Management Settings","Custom Settings","Company Settings","Feature Settings"],answer:["C"]},
+  {id:"q59",n:"59",type:"single",text:"Cloud Kicks wants a report to categorize accounts into small, medium, and large based on the dollar value in the Contract Value field. Which feature should a Platform Administrator use?",options:["Filter Logic","Group Rows","Bucket Column","Detail Column"],answer:["C"]},
+  {id:"q60",n:"60",type:"single",text:"A Platform Administrator at Universal Containers needs an automated way to delete records based on field values. Which automated solution should the administrator use?",options:["Automation Studio","Flow Builder","Flow Orchestration","Mass Delete Records"],answer:["B"]},
+  {id:"q61",n:"61",type:"single",text:"A sales manager at Cloud Kicks would like a dashboard to emphasize important data and tell a more compelling data story to sales reps. How should a Platform Administrator achieve this?",options:["Use a Text Widget.","Use the Highlights Panel.","Assign a new Task to each rep.","Send out a mass email."],answer:["A"]},
+  {id:"q62",n:"62",type:"single",text:"A Platform Administrator for Cloud Kicks has created a screen flow to help service reps ask the same set of questions when customers call with issues. The screen should be visible from cases. How should the administrator distribute the screen flow?",options:["Component Filter","Lightning Page","Home","Layout"],answer:["B"]},
+  {id:"q63",n:"63",type:"single",text:"What is an Agentforce use case in a sales organization?",options:["Automating Lead Qualification","Generating cold calls","Providing basic web bot chats","Automating all marketing content"],answer:["A"]},
+  {id:"q64",n:"64",type:"single",text:"The Cloud Kicks CFO requires any opportunity over $100,000 to be automatically sent to them so they can sign off on the record before the deal closes. Which feature should a Platform Administrator use to fulfill this requirement?",options:["Einstein Next Best Action","Flow Approvals","Apex Triggers","Submit for Approval button"],answer:["B"]},
+  {id:"q65",n:"65",type:"multi",choose:2,text:"A Platform Administrator at Cloud Kicks has created an approval process for time-off requests. Which two automated actions are available for the administrator to add as part of the approval process?",options:["Email Alert","Chatter Post","Field Update","Autolaunched Flow"],answer:["A","C"]}
+];
+
+const storagePrefix = "adminSet2Quiz:";
+const dotsEl = document.getElementById("dots");
+const quizEl = document.getElementById("quiz");
+const resultsEl = document.getElementById("results");
+const topbar = document.getElementById("topbar");
+const menuToggle = document.getElementById("topbarToggle");
+let submitted = false;
+let reviewMode = false;
+const scorable = questions.filter(q => q.answer.length > 0);
+
+function getSelected(q) {
+  try {
+    const value = JSON.parse(localStorage.getItem(storagePrefix + q.id) || "[]");
+    return Array.isArray(value) ? value.filter(letter => q.options.includes(q.options["ABCD".indexOf(letter)])) : [];
+  } catch (error) {
+    console.error("Could not read saved quiz selection.", error);
+    return [];
+  }
+}
+
+function saveSelected(q, values) {
+  try {
+    localStorage.setItem(storagePrefix + q.id, JSON.stringify(values));
+  } catch (error) {
+    console.error("Could not save quiz selection.", error);
+  }
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
+
+function render() {
+  quizEl.replaceChildren();
+  dotsEl.replaceChildren();
+  questions.forEach((q, index) => {
+    const selected = getSelected(q);
+    const card = document.createElement("article");
+    card.className = "question-card";
+    card.id = q.id;
+    card.dataset.index = String(index);
+    const kind = q.type === "multi" ? `Choose ${q.choose}` : q.type === "unavailable" ? "Unavailable in PDF" : "Choose 1";
+    const options = q.options.length ? `<div class="options">${q.options.map((option, optIndex) => {
+      const letter = "ABCD"[optIndex];
+      const checked = selected.includes(letter) ? "checked" : "";
+      return `<div class="option ${q.type === "multi" ? "multi" : ""}" data-letter="${letter}">
+        <input ${checked} type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" id="${q.id}_${letter}" value="${letter}" ${submitted ? "disabled" : ""}>
+        <label class="opt-label" for="${q.id}_${letter}"><span class="letter">${letter}</span><span class="control" aria-hidden="true"></span><span>${escapeHtml(option)}</span></label>
+      </div>`;
+    }).join("")}</div>` : `<div class="unavailable">Question text and answer options are not readable in the source PDF. This item is excluded from scoring.</div>`;
+    card.innerHTML = `<div class="qhead"><div class="qmeta"><span class="badge qnum">Question ${escapeHtml(q.n)}</span><span class="badge qtype">${kind}</span></div><span class="subtitle selected-info" id="selected-${q.id}">Selected: ${selected.length}</span></div>
+      <h2 class="qtext">${escapeHtml(q.text)}</h2>${options}<div class="legend" id="legend-${q.id}"></div>`;
+    quizEl.appendChild(card);
+
+    const dot = document.createElement("button");
+    dot.className = "dot" + (selected.length ? " answered" : "");
+    dot.type = "button";
+    dot.textContent = q.n;
+    dot.setAttribute("aria-label", `Go to question ${q.n}`);
+    dot.addEventListener("click", () => card.scrollIntoView({behavior:"smooth",block:"start"}));
+    dotsEl.appendChild(dot);
+  });
+  bindInputs();
+  if (submitted) applyResults();
+  updateStats();
+  observeQuestions();
+}
+
+function bindInputs() {
+  quizEl.querySelectorAll("input").forEach(input => {
+    input.addEventListener("change", event => {
+      if (submitted) return;
+      const q = questions.find(item => item.id === event.target.name);
+      if (!q) return;
+      const values = [...quizEl.querySelectorAll(`input[name="${q.id}"]:checked`)].map(item => item.value);
+      saveSelected(q, values);
+      document.getElementById(`selected-${q.id}`).textContent = `Selected: ${values.length}`;
+      dotsEl.children[questions.indexOf(q)].classList.toggle("answered", values.length > 0);
+      updateStats();
+    });
+  });
+}
+
+function applyResults() {
+  let correctCount = 0;
+  questions.forEach((q, index) => {
+    const card = document.getElementById(q.id);
+    const dot = dotsEl.children[index];
+    if (!q.answer.length) {
+      dot.classList.add("unscored");
+      return;
+    }
+    const selected = getSelected(q).sort();
+    const expected = [...q.answer].sort();
+    const correct = selected.length === expected.length && selected.every((value, i) => value === expected[i]);
+    if (correct) correctCount++;
+    card.classList.add("locked");
+    card.querySelectorAll(".option").forEach(option => {
+      const letter = option.dataset.letter;
+      const isCorrect = q.answer.includes(letter);
+      const isSelected = selected.includes(letter);
+      if (isCorrect && isSelected) option.classList.add("correct");
+      else if (!isCorrect && isSelected) option.classList.add("incorrect");
+      else if (isCorrect && reviewMode) option.classList.add("missed");
+    });
+    const legend = card.querySelector(".legend");
+    legend.classList.add("visible");
+    legend.textContent = reviewMode
+      ? `Correct answer${q.answer.length > 1 ? "s" : ""}: ${q.answer.join(", ")}`
+      : correct ? "Correct" : selected.length ? "Incorrect" : "Not answered";
+    dot.classList.remove("answered");
+    dot.classList.add(correct ? "correct" : "incorrect");
+  });
+  const answered = scorable.filter(q => getSelected(q).length > 0).length;
+  resultsEl.classList.add("visible");
+  document.getElementById("rTotal").textContent = questions.length;
+  document.getElementById("rAnswered").textContent = answered;
+  document.getElementById("rCorrect").textContent = `${correctCount} / ${scorable.length}`;
+  document.getElementById("rScore").textContent = `${Math.round(correctCount / scorable.length * 100)}%`;
+  document.getElementById("correctStat").textContent = correctCount;
+  document.getElementById("scoreStat").textContent = `${Math.round(correctCount / scorable.length * 100)}%`;
+  document.getElementById("modeStat").textContent = reviewMode ? "Review" : "Submitted";
+}
+
+function updateStats() {
+  const answered = questions.filter(q => getSelected(q).length > 0).length;
+  const selections = questions.reduce((sum, q) => sum + getSelected(q).length, 0);
+  document.getElementById("answeredStat").textContent = `${answered} / ${questions.length}`;
+  document.getElementById("selectionStat").textContent = selections;
+  const percent = Math.round(answered / questions.length * 100);
+  document.getElementById("progressBar").style.width = `${percent}%`;
+  document.querySelector(".progress").setAttribute("aria-valuenow", String(answered));
+  if (!submitted) {
+    document.getElementById("correctStat").textContent = "—";
+    document.getElementById("scoreStat").textContent = "—";
+    document.getElementById("modeStat").textContent = "Attempt";
+  }
+}
+
+function observeQuestions() {
+  const dots = [...dotsEl.children];
+  const cards = [...quizEl.children];
+  if (!("IntersectionObserver" in window)) return;
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        dots.forEach(dot => dot.classList.remove("current"));
+        const index = Number(entry.target.dataset.index);
+        if (dots[index]) dots[index].classList.add("current");
+      }
+    });
+  }, {rootMargin:"-25% 0px -65% 0px",threshold:0});
+  cards.forEach(card => observer.observe(card));
+}
+
+function setSubmitted(asReview) {
+  submitted = true;
+  reviewMode = asReview;
+  applyResults();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+menuToggle.addEventListener("click", () => {
+  const hidden = topbar.classList.toggle("hidden");
+  document.body.classList.toggle("menu-hidden", hidden);
+  menuToggle.textContent = hidden ? "Show menu" : "Hide menu";
+  menuToggle.setAttribute("aria-expanded", String(!hidden));
+});
+document.getElementById("submitBtn").addEventListener("click", () => setSubmitted(false));
+document.getElementById("reviewBtn").addEventListener("click", () => setSubmitted(true));
+document.getElementById("restartBtn").addEventListener("click", () => {
+  if (!window.confirm("Restart the quiz and clear all saved answers?")) return;
+  questions.forEach(q => {
+    try { localStorage.removeItem(storagePrefix + q.id); }
+    catch (error) { console.error("Could not clear saved quiz selection.", error); }
+  });
+  submitted = false;
+  reviewMode = false;
+  resultsEl.classList.remove("visible");
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+render();
+</script>
+</body>
+</html>
